@@ -1,0 +1,154 @@
+# Implementation Plan
+
+- [x] 1. Enhance SpecIR Data Models
+  - [x] 1.1 Add TestMapping dataclass to core models
+    - Define fields: framework, path, selector, confidence, spec_ids
+    - Add to_dict() and from_dict() methods
+    - Add validation for required fields
+    - _Requirements: 1.2, 2.2_
+  - [x] 1.2 Add CodeRef dataclass to core models
+    - Define fields: language, file_path, symbols, line_range, confidence
+    - Add to_dict() and from_dict() methods
+    - Add validation for line_range tuple format
+    - _Requirements: 3.2, 3.3_
+  - [x] 1.3 Extend SpecBlock with new fields
+    - Add test_mappings: list[TestMapping] field
+    - Add code_refs: list[CodeRef] field
+    - Add confidence: float field with default 1.0
+    - Update serialization methods
+    - _Requirements: 2.1, 3.1, 4.1_
+  - [x] 1.4 Write property test for TestMapping completeness
+    - **Property 1: TestMapping Completeness**
+    - **Validates: Requirements 1.2**
+  - [x] 1.5 Write property test for SpecBlock test_mappings round-trip
+    - **Property 3: SpecBlock Test Mapping Round-Trip**
+    - **Validates: Requirements 2.3, 2.4**
+  - [x] 1.6 Write property test for SpecBlock code_refs round-trip
+    - **Property 4: SpecBlock CodeRef Round-Trip**
+    - **Validates: Requirements 3.4, 3.5**
+  - [x] 1.7 Write property test for confidence range validation
+    - **Property 5: Confidence Range Validation**
+    - **Validates: Requirements 4.2**
+
+- [x] 2. Checkpoint - Ensure all tests pass
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [x] 3. Implement Test Framework Detection
+  - [x] 3.1 Create TestFramework enum
+    - Define PYTEST, JEST, VITEST, PLAYWRIGHT, MOCHA, UNKNOWN values
+    - Add file pattern constants for each framework
+    - _Requirements: 6.1_
+  - [x] 3.2 Implement framework detection logic
+    - Scan workspace for test file patterns
+    - Return list of detected frameworks
+    - Handle multiple frameworks in same workspace
+    - _Requirements: 6.1, 6.3_
+  - [x] 3.3 Write property test for framework detection
+    - **Property 8: Framework Detection**
+    - **Validates: Requirements 6.1**
+
+- [x] 4. Implement Test File Parsing
+  - [x] 4.1 Implement pytest test parser
+    - Extract test functions (test_* prefix)
+    - Extract test classes (Test* prefix)
+    - Build selectors in pytest format (file::class::method)
+    - _Requirements: 6.2_
+  - [x] 4.2 Implement jest/vitest test parser
+    - Extract describe/it/test blocks
+    - Build selectors in jest format
+    - _Requirements: 6.2_
+  - [x] 4.3 Implement playwright test parser
+    - Extract test blocks from spec files
+    - Build selectors in playwright format
+    - _Requirements: 6.2_
+  - [x] 4.4 Write property test for test selector extraction
+    - **Property 9: Test Selector Extraction**
+    - **Validates: Requirements 6.2, 6.4**
+
+- [x] 5. Implement TestMappingEngine
+  - [x] 5.1 Create TestMappingEngine class
+    - Initialize with workspace path
+    - Store detected frameworks
+    - _Requirements: 1.1_
+  - [x] 5.2 Implement get_tests_for_files method
+    - Find test files related to changed files
+    - Use naming conventions and imports to map
+    - Return TestMapping list ordered by confidence
+    - _Requirements: 1.1, 1.3, 1.5_
+  - [x] 5.3 Implement get_tests_for_spec method
+    - Look up test_mappings from SpecBlock
+    - Return TestMapping list
+    - _Requirements: 8.1_
+  - [x] 5.4 Write property test for confidence ordering
+    - **Property 2: Confidence Ordering**
+    - **Validates: Requirements 1.5**
+
+- [x] 6. Checkpoint - Ensure all tests pass
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [x] 7. Implement Code Analyzer
+  - [x] 7.1 Create CodeAnalyzer class
+    - Initialize with workspace path
+    - Support Python, JavaScript, TypeScript
+    - _Requirements: 5.1_
+  - [x] 7.2 Implement Python symbol extraction
+    - Parse AST to extract functions and classes
+    - Extract docstrings and signatures
+    - _Requirements: 5.2_
+  - [x] 7.3 Implement JavaScript/TypeScript symbol extraction
+    - Use regex patterns for function/class extraction
+    - Extract JSDoc comments
+    - _Requirements: 5.2_
+  - [x] 7.4 Write property test for symbol extraction
+    - **Property 6: Code Symbol Extraction**
+    - **Validates: Requirements 5.2**
+
+- [x] 8. Implement Spec Inference
+  - [x] 8.1 Create SpecCandidate dataclass
+    - Define fields: suggested_id, title, spec_type, confidence, rationale, code_refs
+    - Add to_dict() method
+    - _Requirements: 5.3_
+  - [x] 8.2 Implement infer_specs method
+    - Analyze code file for symbols
+    - Generate SpecCandidate for each significant symbol
+    - Match against existing specs if provided
+    - _Requirements: 5.3, 5.4_
+  - [x] 8.3 Write property test for SpecCandidate structure
+    - **Property 7: SpecCandidate Structure**
+    - **Validates: Requirements 5.3**
+
+- [x] 9. Integrate with SpecMemClient
+  - [x] 9.1 Update get_context_for_change to include suggested_tests
+    - Use TestMappingEngine to find tests
+    - Add to ContextBundle.suggested_tests
+    - _Requirements: 7.1_
+  - [x] 9.2 Update get_impacted_specs to include test_mappings
+    - Include test_mappings from each ImpactedSpec
+    - _Requirements: 7.2_
+  - [x] 9.3 Write property test for API test mapping inclusion
+    - **Property 10: API Test Mapping Inclusion**
+    - **Validates: Requirements 7.1**
+
+- [x] 10. Checkpoint - Ensure all tests pass
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [x] 11. Implement CLI Commands
+  - [x] 11.1 Implement `specmem tests` command
+    - Accept spec_id argument
+    - Accept --file option for file-based lookup
+    - Display tests with framework, path, selector, confidence
+    - _Requirements: 8.1, 8.2, 8.3_
+  - [x] 11.2 Implement `specmem infer` command
+    - Accept file path argument
+    - Display inferred SpecCandidates
+    - Show confidence and rationale
+    - _Requirements: 5.1, 5.3_
+  - [x] 11.3 Write unit tests for CLI commands
+    - Test `specmem tests` with valid spec_id
+    - Test `specmem tests --file` with valid path
+    - Test `specmem infer` with code file
+    - _Requirements: 8.1, 8.2, 5.1_
+
+- [x] 12. Final Checkpoint - Ensure all tests pass
+  - Ensure all tests pass, ask the user if questions arise.
+

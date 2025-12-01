@@ -1,0 +1,177 @@
+# Implementation Plan
+
+- [x] 1. Create Graph Data Models
+  - [x] 1.1 Create NodeType and EdgeType enums
+    - Define SPEC, CODE, TEST node types
+    - Define IMPLEMENTS, TESTS, DEPENDS_ON, REFERENCES edge types
+    - _Requirements: 1.1, 3.1_
+  - [x] 1.2 Create GraphNode dataclass
+    - Define fields: id, type, data, confidence, suggested
+    - Add to_dict() and from_dict() methods
+    - _Requirements: 1.2_
+  - [x] 1.3 Create GraphEdge dataclass
+    - Define fields: source_id, target_id, relationship, confidence, metadata, manual
+    - Add to_dict() and from_dict() methods
+    - _Requirements: 1.2, 7.4_
+  - [x] 1.4 Create ImpactSet dataclass
+    - Define fields: specs, code, tests, changed_files, depth, message
+    - Add to_dict() and get_test_commands() methods
+    - _Requirements: 5.1_
+  - [x] 1.5 Write property test for confidence inclusion
+    - **Property 3: Confidence Inclusion**
+    - **Validates: Requirements 1.2, 2.2, 3.2**
+
+- [x] 2. Checkpoint - Ensure all tests pass
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [x] 3. Implement SpecImpactGraph Core
+  - [x] 3.1 Create SpecImpactGraph class with storage
+    - Initialize with storage path
+    - Implement node and edge storage (JSON file)
+    - Implement load/save methods
+    - _Requirements: 4.3_
+  - [x] 3.2 Implement add_node and add_edge methods
+    - Add nodes to internal dict
+    - Add edges to internal list
+    - Validate node/edge data
+    - _Requirements: 1.1_
+  - [x] 3.3 Implement query_specs_for_code method
+    - Traverse edges from code node to spec nodes
+    - Support transitive relationships
+    - Return nodes with confidence
+    - _Requirements: 1.1, 1.3_
+  - [x] 3.4 Write property test for spec query completeness
+    - **Property 1: Spec Query Completeness**
+    - **Validates: Requirements 1.1**
+  - [x] 3.5 Write property test for transitive closure
+    - **Property 2: Transitive Closure**
+    - **Validates: Requirements 1.3**
+
+- [x] 4. Implement Bidirectional Queries
+  - [x] 4.1 Implement query_code_for_spec method
+    - Reverse traversal from spec to code
+    - Include all linked code files
+    - _Requirements: 3.1, 3.2, 3.3_
+  - [x] 4.2 Implement query_tests_for_change method
+    - Traverse code→spec→test path
+    - Order by confidence descending
+    - _Requirements: 2.1, 2.2, 2.3_
+  - [x] 4.3 Write property test for bidirectional query
+    - **Property 5: Bidirectional Query**
+    - **Validates: Requirements 1.1, 3.1**
+  - [x] 4.4 Write property test for test ordering
+    - **Property 4: Test Ordering**
+    - **Validates: Requirements 2.3**
+
+- [x] 5. Implement Impact Analysis
+  - [x] 5.1 Implement query_impact method
+    - Combine specs, code, and tests in one response
+    - Support configurable depth
+    - Support pagination/limits
+    - _Requirements: 5.1, 5.2, 5.3_
+  - [x] 5.2 Write property test for impact set completeness
+    - **Property 7: Impact Set Completeness**
+    - **Validates: Requirements 5.1**
+  - [x] 5.3 Write property test for depth limiting
+    - **Property 8: Depth Limiting**
+    - **Validates: Requirements 5.2**
+
+- [x] 6. Checkpoint - Ensure all tests pass
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [x] 7. Implement Incremental Updates
+  - [x] 7.1 Implement update_incremental method
+    - Update only affected nodes
+    - Preserve unaffected relationships
+    - Handle conflicts with warnings
+    - _Requirements: 4.1, 4.2, 4.3, 4.4_
+  - [x] 7.2 Write property test for incremental preservation
+    - **Property 6: Incremental Preservation**
+    - **Validates: Requirements 4.3**
+
+- [x] 8. Implement Graph Export
+  - [x] 8.1 Implement export method with JSON format
+    - Export full graph as JSON
+    - Support filtering by node type
+    - Support subgraph extraction
+    - _Requirements: 6.1, 6.2, 6.3, 6.4_
+  - [x] 8.2 Implement DOT format export
+    - Generate Graphviz DOT format
+    - Include node labels and edge types
+    - _Requirements: 6.2_
+  - [x] 8.3 Implement Mermaid format export
+    - Generate Mermaid diagram syntax
+    - Support flowchart and graph types
+    - _Requirements: 6.2_
+  - [x] 8.4 Write property test for export format validity
+    - **Property 9: Export Format Validity**
+    - **Validates: Requirements 6.1, 6.2**
+
+- [x] 9. Implement GraphBuilder
+  - [x] 9.1 Create GraphBuilder class
+    - Initialize with workspace path and confidence threshold
+    - Wire up CodeAnalyzer and TestMappingEngine
+    - _Requirements: 7.1_
+  - [x] 9.2 Implement build method
+    - Create nodes for all specs
+    - Analyze code files for links
+    - Link tests to specs
+    - _Requirements: 7.1, 7.2_
+  - [x] 9.3 Implement analyze_code_links method
+    - Use naming conventions for matching
+    - Use semantic similarity for matching
+    - Mark low-confidence links as suggested
+    - _Requirements: 7.2, 7.3_
+  - [x] 9.4 Write property test for suggested link marking
+    - **Property 10: Suggested Link Marking**
+    - **Validates: Requirements 7.3**
+  - [x] 9.5 Write property test for manual link priority
+    - **Property 11: Manual Link Priority**
+    - **Validates: Requirements 7.4**
+
+- [x] 10. Checkpoint - Ensure all tests pass
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [x] 11. Implement CLI Commands
+  - [x] 11.1 Implement `specmem graph impact` command
+    - Accept file paths as arguments
+    - Display affected specs and tests
+    - Show confidence scores
+    - _Requirements: 8.1_
+  - [x] 11.2 Implement `specmem graph show` command
+    - Accept node_id argument
+    - Display node relationships
+    - Show incoming and outgoing edges
+    - _Requirements: 8.2_
+  - [x] 11.3 Implement `specmem graph export` command
+    - Accept --format option (json, dot, mermaid)
+    - Accept --filter option for node types
+    - Accept --focal option for subgraph
+    - _Requirements: 8.3_
+  - [x] 11.4 Implement `specmem graph stats` command
+    - Display node counts by type
+    - Display edge counts by type
+    - Show graph density and connectivity
+    - _Requirements: 8.4_
+  - [x] 11.5 Write unit tests for CLI commands
+    - Test each command with valid inputs
+    - Test error handling
+    - _Requirements: 8.1, 8.2, 8.3, 8.4_
+
+- [x] 12. Integrate with SpecMemClient
+  - [x] 12.1 Add graph property to SpecMemClient
+    - Lazy-load graph on first access
+    - Build graph if not exists
+    - _Requirements: 1.1_
+  - [x] 12.2 Update get_impacted_specs to use graph
+    - Use graph traversal instead of basic matching
+    - Include transitive relationships
+    - _Requirements: 1.1, 1.3_
+  - [x] 12.3 Add get_impact_set method to SpecMemClient
+    - Return full ImpactSet for changes
+    - Support depth configuration
+    - _Requirements: 5.1, 5.2_
+
+- [x] 13. Final Checkpoint - Ensure all tests pass
+  - Ensure all tests pass, ask the user if questions arise.
+

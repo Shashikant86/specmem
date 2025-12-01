@@ -1,0 +1,143 @@
+# SpecMem Configuration Example
+# Copy this file to .specmem.toml and customize for your project
+
+# =============================================================================
+# General Settings
+# =============================================================================
+
+[general]
+# Project name (used in Agent Experience Pack)
+name = "my-project"
+
+# Verbose logging
+verbose = false
+
+# =============================================================================
+# Vector Database Configuration
+# =============================================================================
+
+[vectordb]
+# Backend: "lancedb" (default), "chroma", "qdrant", "agentvectordb"
+backend = "lancedb"
+
+# Path for local storage (relative to project root)
+path = ".specmem/vectordb"
+
+# Qdrant-specific settings (if using qdrant backend)
+# [vectordb.qdrant]
+# url = "http://localhost:6333"
+# api_key = ""  # Use QDRANT_API_KEY env var instead
+
+# ChromaDB-specific settings (if using chroma backend)
+# [vectordb.chroma]
+# host = "localhost"
+# port = 8000
+
+# =============================================================================
+# Embedding Configuration
+# =============================================================================
+
+[embedding]
+# Provider: "local" (default), "openai", "anthropic", "google", "together"
+provider = "local"
+
+# Model name (provider-specific)
+# Local: "all-MiniLM-L6-v2" (default), "all-mpnet-base-v2"
+# OpenAI: "text-embedding-3-small", "text-embedding-3-large"
+# Anthropic: "voyage-2"
+# Google: "embedding-001"
+# Together: "togethercomputer/m2-bert-80M-8k-retrieval"
+model = "all-MiniLM-L6-v2"
+
+# API key (use environment variables instead for security)
+# api_key = ""  # Use OPENAI_API_KEY, ANTHROPIC_API_KEY, etc.
+
+# =============================================================================
+# Memory Bank Settings
+# =============================================================================
+
+[memory]
+# Maximum chunk size for large documents
+chunk_size = 1000
+
+# Overlap between chunks
+chunk_overlap = 100
+
+# Default number of results for queries
+default_top_k = 10
+
+# =============================================================================
+# Adapter Settings
+# =============================================================================
+
+[adapters]
+# Enable/disable specific adapters
+kiro = true
+cursor = true
+claude = true
+speckit = true
+tessl = true
+
+# =============================================================================
+# SpecImpact Graph Settings
+# =============================================================================
+
+[impact]
+# Maximum traversal depth for impact analysis
+max_depth = 2
+
+# Include suggested (low-confidence) links
+include_suggested = false
+
+# =============================================================================
+# SpecDiff Settings
+# =============================================================================
+
+[diff]
+# Enable version tracking
+enabled = true
+
+# Minimum versions to keep per spec
+keep_min_versions = 10
+
+# =============================================================================
+# Validation Settings
+# =============================================================================
+
+[validation]
+# Enable validation rules
+enabled = true
+
+# Rule-specific settings
+[validation.rules]
+contradiction = true
+acceptance_criteria = true
+constraints = true
+duplicates = true
+timeline = true
+structure = true
+
+# =============================================================================
+# CLI Settings
+# =============================================================================
+
+[cli]
+# Default output format: "json", "markdown", "text"
+output_format = "markdown"
+
+# Color output
+color = true
+
+# =============================================================================
+# Web UI Settings
+# =============================================================================
+
+[ui]
+# Host to bind to
+host = "127.0.0.1"
+
+# Port to listen on
+port = 8080
+
+# Enable hot reload in development
+hot_reload = false

@@ -1,0 +1,210 @@
+# Implementation Plan
+
+## Epic: SpecMem MVP Implementation
+
+- [x] 1. Project Scaffolding and Core Setup
+  - [x] 1.1 Create directory structure for specmem package
+    - Create `specmem/` with subdirectories: `cli/`, `core/`, `adapters/`, `vectordb/`, `agentx/`, `impact/`, `output/`
+    - Add `__init__.py` files to all packages
+    - _Requirements: 1.7, 8.8_
+  - [x] 1.2 Set up project configuration with pyproject.toml
+    - Configure dependencies: typer, rich, pydantic, lancedb, sentence-transformers, hypothesis
+    - Set up entry point for `specmem` CLI command
+    - _Requirements: 8.1_
+  - [x] 1.3 Implement base exception classes
+    - Create `SpecMemError`, `AdapterError`, `VectorStoreError`, `ConfigurationError`
+    - _Requirements: 8.6_
+
+- [x] 2. SpecIR Core Models
+  - [x] 2.1 Implement SpecBlock Pydantic model
+    - Create `SpecType` and `SpecStatus` enums
+    - Implement `SpecBlock` with all fields: id, type, text, source, status, tags, links, pinned
+    - Add `generate_id()` class method for deterministic ID generation
+    - Add `to_json()` and `from_json()` methods for serialization
+    - Add validator for non-empty text
+    - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7_
+  - [x] 2.2 Write property test for SpecBlock serialization round-trip
+    - **Property 1: SpecBlock Serialization Round-Trip**
+    - **Validates: Requirements 2.6, 2.7**
+  - [x] 2.3 Write property test for SpecBlock ID determinism
+    - **Property 2: SpecBlock ID Determinism**
+    - **Validates: Requirements 2.2**
+  - [x] 2.4 Write property test for empty text rejection
+    - **Property 3: Empty Text Rejection**
+    - **Validates: Requirements 2.5**
+  - [x] 2.5 Implement Configuration models
+    - Create `EmbeddingConfig`, `VectorDBConfig`, `SpecMemConfig` Pydantic models
+    - Implement config loading from `.specmem.toml` or `.specmem.json`
+    - Add default values and validation
+    - _Requirements: 11.1, 11.2, 11.3, 11.4, 11.5_
+  - [x] 2.6 Write property test for configuration validation
+    - **Property 9: Configuration Validation**
+    - **Validates: Requirements 11.1, 11.5**
+
+- [x] 3. Checkpoint - Ensure all tests pass
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [x] 4. Adapter System
+  - [x] 4.1 Implement SpecAdapter base interface
+    - Create abstract base class with `detect()`, `load()`, and `name` property
+    - _Requirements: 1.6_
+  - [x] 4.2 Implement adapter discovery and registration
+    - Auto-discover adapters in `specmem/adapters/` directory
+    - Register adapters at initialization
+    - _Requirements: 1.7_
+  - [x] 4.3 Write property test for adapter detection consistency
+    - **Property 4: Adapter Detection Consistency**
+    - **Validates: Requirements 1.6, 1.7**
+  - [x] 4.4 Implement KiroAdapter
+    - Implement `detect()` to check for `.kiro/` directory with spec files
+    - Implement `load()` to parse `requirements.md`, `design.md`, `tasks.md`
+    - Extract requirements, acceptance criteria, design sections, and tasks as SpecBlocks
+    - Handle malformed content gracefully with warnings
+    - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5_
+  - [x] 4.5 Write unit tests for KiroAdapter
+    - Test detection with valid .kiro directory
+    - Test detection with missing files
+    - Test parsing of each file type
+    - Test handling of malformed content
+    - _Requirements: 1.2, 1.3, 1.4_
+
+- [x] 5. Checkpoint - Ensure all tests pass
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [x] 6. Vector Storage Layer
+  - [x] 6.1 Implement VectorStore base interface
+    - Create abstract base class with `initialize()`, `store()`, `query()`, `get_pinned()`, `update_status()`
+    - _Requirements: 3.4, 3.5, 3.6_
+  - [x] 6.2 Implement EmbeddingProvider interface
+    - Create abstract base class with `embed()` and `dimension` property
+    - _Requirements: 10.1, 10.2_
+  - [x] 6.3 Implement LocalEmbeddingProvider using SentenceTransformers
+    - Use `all-MiniLM-L6-v2` as default model
+    - Implement batch embedding generation
+    - _Requirements: 10.1_
+  - [x] 6.4 Implement LanceDBStore
+    - Initialize LanceDB connection and create schema
+    - Implement `store()` with columnar data format
+    - Implement `query()` using DiskANN-based search
+    - Implement `get_pinned()` for deterministic memory retrieval
+    - Implement `update_status()` for lifecycle management
+    - Filter legacy/obsolete blocks in queries
+    - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 4.1, 4.2, 5.3, 5.4, 5.5, 5.7_
+  - [x] 6.5 Write property test for vector query relevance ordering
+    - **Property 5: Vector Query Relevance Ordering**
+    - **Validates: Requirements 3.3, 6.3**
+  - [x] 6.6 Write property test for pinned block inclusion
+    - **Property 6: Pinned Block Inclusion**
+    - **Validates: Requirements 4.1, 4.2**
+  - [x] 6.7 Write property test for legacy block exclusion
+    - **Property 7: Legacy Block Exclusion**
+    - **Validates: Requirements 5.3, 5.5**
+  - [x] 6.8 Write property test for status transition persistence
+    - **Property 8: Status Transition Persistence**
+    - **Validates: Requirements 5.7**
+
+- [x] 7. Checkpoint - Ensure all tests pass
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [x] 8. Memory Bank Processing
+  - [x] 8.1 Implement MemoryBank class
+    - Implement chunking algorithm for large documents
+    - Implement relevance scoring based on query similarity
+    - Attach lifecycle metadata to chunks
+    - _Requirements: 6.1, 6.2, 6.3, 6.4_
+  - [x] 8.2 Implement memory statistics calculation
+    - Count blocks by type, status, and source
+    - Calculate active vs legacy counts
+    - _Requirements: 5.6_
+
+- [x] 9. Agent Experience Pack Builder
+  - [x] 9.1 Implement AgentMemory and KnowledgeIndex models
+    - Create Pydantic models for output structures
+    - _Requirements: 7.1_
+  - [x] 9.2 Implement PackBuilder class
+    - Generate `agent_memory.json` with all active SpecBlocks
+    - Generate `agent_context.md` with human-readable summary
+    - Generate `knowledge_index.json` with keyword-to-block mapping
+    - Create `.specmem/` directory structure
+    - Preserve user modifications to `agent_context.md` on rebuild
+    - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5, 7.6, 7.7_
+  - [x] 9.3 Write property test for agent pack completeness
+    - **Property 10: Agent Pack Completeness**
+    - **Validates: Requirements 7.2**
+
+- [x] 10. Checkpoint - Ensure all tests pass
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [x] 11. CLI Implementation
+  - [x] 11.1 Set up Typer CLI skeleton
+    - Create main CLI app with Rich console output
+    - Add `--verbose` flag support
+    - _Requirements: 8.7, 8.8_
+  - [x] 11.2 Implement `specmem init` command
+    - Create default `.specmem.toml` configuration file
+    - Display initialization success message
+    - _Requirements: 8.1_
+  - [x] 11.3 Implement `specmem scan` command
+    - Detect spec frameworks using adapter discovery
+    - Parse files and display summary of discovered specifications
+    - Show counts by type and source
+    - _Requirements: 8.2_
+  - [x] 11.4 Implement `specmem build` command
+    - Process all specs through adapters
+    - Generate embeddings and store in vector DB
+    - Generate Agent Experience Pack
+    - Display build summary
+    - _Requirements: 8.3_
+  - [x] 11.5 Implement `specmem info` command
+    - Display memory statistics
+    - Show block counts by type, status, and source
+    - _Requirements: 8.4_
+  - [x] 11.6 Implement `specmem query` command
+    - Accept query string argument
+    - Search vector memory and return matching SpecBlocks
+    - Display results with relevance scores
+    - _Requirements: 8.5_
+  - [x] 11.7 Write unit tests for CLI commands
+    - Test each command with valid inputs
+    - Test error handling and exit codes
+    - _Requirements: 8.6_
+
+- [x] 12. Checkpoint - Ensure all tests pass
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [x] 13. SpecImpact Analyzer (MVP)
+  - [x] 13.1 Implement SpecImpact analyzer
+    - Detect changed files in repository (git diff)
+    - Map code files to related SpecIR blocks
+    - Produce targeted spec execution list
+    - Indicate files not covered by specs
+    - _Requirements: 9.1, 9.2, 9.3, 9.4_
+  - [x] 13.2 Implement `specmem impact` command
+    - Display changed files and related specs
+    - Show coverage status
+    - _Requirements: 9.1, 9.3_
+
+- [x] 14. Living Documentation Generator
+  - [x] 14.1 Implement LivingDocsGenerator
+    - Output Markdown summaries organized by spec type
+    - Include links to source SpecIR blocks
+    - Show specification relationships and dependencies
+    - _Requirements: 12.1, 12.2, 12.3, 12.4_
+
+- [x] 15. Integration and Polish
+  - [x] 15.1 Wire all components together
+    - Ensure CLI commands delegate to core modules
+    - Verify end-to-end pipeline works
+    - _Requirements: 8.8_
+  - [x] 15.2 Write integration tests for full pipeline
+    - Test scan → build → query flow
+    - Test pack generation with real Kiro specs
+    - _Requirements: 1.1, 7.1, 8.2, 8.3_
+  - [x] 15.3 Create README with killer feature messaging
+    - Document installation and usage
+    - Highlight agent-agnostic context layer
+    - Include examples for each CLI command
+    - _Requirements: All_
+
+- [x] 16. Final Checkpoint - Ensure all tests pass
+  - Ensure all tests pass, ask the user if questions arise.

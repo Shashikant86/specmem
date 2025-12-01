@@ -1,0 +1,154 @@
+# Implementation Plan
+
+- [x] 1. Implement Token Estimation
+  - [x] 1.1 Create TokenEstimator class with tiktoken integration
+    - Implement `count_tokens()` using cl100k_base tokenizer
+    - Add fallback to character-based estimation if tiktoken unavailable
+    - Implement `count_with_format()` for format overhead
+    - _Requirements: 7.1, 7.2_
+  - [ ]* 1.2 Write property test for token estimation accuracy
+    - **Property 9: Token Estimation Accuracy**
+    - **Validates: Requirements 7.3**
+  - [x] 1.3 Add format overhead calculation
+    - Calculate JSON formatting overhead (brackets, quotes, keys)
+    - Calculate Markdown formatting overhead (headers, bullets)
+    - Calculate plain text separator overhead
+    - _Requirements: 7.2_
+
+- [x] 2. Implement Context Optimizer
+  - [x] 2.1 Create ContextChunk data model
+    - Define dataclass with block_id, text, tokens, relevance, truncated fields
+    - Add serialization methods for JSON output
+    - _Requirements: 4.3_
+  - [x] 2.2 Implement ContextOptimizer class
+    - Create `optimize()` method to fit blocks within budget
+    - Prioritize pinned blocks, then by relevance score
+    - Track token usage per chunk
+    - _Requirements: 2.1, 2.2_
+  - [ ]* 2.3 Write property test for token budget compliance
+    - **Property 2: Token Budget Compliance**
+    - **Validates: Requirements 2.1**
+  - [x] 2.4 Implement truncation with sentence boundaries
+    - Create `truncate_to_budget()` method
+    - Find sentence boundaries (., !, ? followed by space/end)
+    - Preserve complete sentences when truncating
+    - _Requirements: 2.3_
+  - [ ]* 2.5 Write property test for sentence boundary preservation
+    - **Property 4: Sentence Boundary Preservation**
+    - **Validates: Requirements 2.3**
+  - [ ]* 2.6 Write property test for truncation priority
+    - **Property 3: Truncation Priority**
+    - **Validates: Requirements 2.2**
+
+- [x] 3. Checkpoint - Ensure all tests pass
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [x] 4. Implement Context Formatter
+  - [x] 4.1 Create ContextFormatter class
+    - Implement `format()` dispatcher method
+    - Support "json", "markdown", "text" formats
+    - _Requirements: 4.1_
+  - [x] 4.2 Implement JSON formatting
+    - Include id, type, source, relevance_score in output
+    - Structure as array of chunk objects
+    - _Requirements: 4.3_
+  - [ ]* 4.3 Write property test for JSON format completeness
+    - **Property 6: Format Completeness - JSON**
+    - **Validates: Requirements 4.3**
+  - [x] 4.4 Implement Markdown formatting
+    - Add headers for each specification type
+    - Use bullet points for content
+    - Include source as subheading
+    - _Requirements: 4.2_
+  - [ ]* 4.5 Write property test for Markdown format structure
+    - **Property 7: Format Completeness - Markdown**
+    - **Validates: Requirements 4.2**
+  - [x] 4.6 Implement plain text formatting
+    - Concatenate specs with clear separators (---)
+    - Include type and source labels
+    - _Requirements: 4.4_
+
+- [x] 5. Implement Agent Profiles
+  - [x] 5.1 Create AgentProfile dataclass
+    - Define fields: name, context_window, token_budget, preferred_format, type_filters
+    - Set sensible defaults (4000 token budget, json format)
+    - _Requirements: 3.1, 2.4_
+  - [x] 5.2 Implement profile persistence
+    - Save profiles to .specmem/profiles.json
+    - Load profiles on startup
+    - _Requirements: 3.2_
+  - [ ]* 5.3 Write property test for profile round-trip
+    - **Property 5: Profile Round-Trip**
+    - **Validates: Requirements 3.2**
+  - [x] 5.4 Implement profile lookup with fallback
+    - Return default profile for unknown names
+    - Log warning when falling back
+    - _Requirements: 3.3, 3.4_
+
+- [x] 6. Checkpoint - Ensure all tests pass
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [x] 7. Implement Streaming Context API
+  - [x] 7.1 Create StreamingContextAPI class
+    - Initialize with MemoryBank, TokenEstimator, default budget
+    - Wire up ContextOptimizer and ContextFormatter
+    - _Requirements: 1.1_
+  - [x] 7.2 Implement synchronous get_context method
+    - Query memory bank for relevant blocks
+    - Optimize to fit token budget
+    - Format and return ContextResponse
+    - _Requirements: 1.1, 1.4_
+  - [x] 7.3 Implement async stream_query method
+    - Yield ContextChunks as async generator
+    - Order by pinned first, then relevance
+    - Send completion signal at end
+    - _Requirements: 1.1, 1.2, 1.3, 1.4_
+  - [ ]* 7.4 Write property test for result ordering
+    - **Property 1: Result Ordering**
+    - **Validates: Requirements 1.2, 1.3**
+  - [x] 7.5 Implement type filtering
+    - Filter blocks by specified types before optimization
+    - Support multiple type filters (OR logic)
+    - Ignore invalid types with warning
+    - _Requirements: 5.1, 5.2, 5.3, 5.4_
+  - [ ]* 7.6 Write property test for type filter correctness
+    - **Property 8: Type Filter Correctness**
+    - **Validates: Requirements 5.1, 5.2**
+
+- [x] 8. Add REST API Endpoints
+  - [x] 8.1 Add POST /api/context/query endpoint
+    - Accept query, token_budget, format, type_filters, profile
+    - Return ContextResponse as JSON
+    - _Requirements: 1.1_
+  - [x] 8.2 Add GET /api/context/stream endpoint (SSE)
+    - Stream chunks as Server-Sent Events
+    - Send completion event at end
+    - _Requirements: 1.1, 1.4_
+  - [x] 8.3 Add profile management endpoints
+    - GET /api/profiles - list all profiles
+    - POST /api/profiles - create profile
+    - GET /api/profiles/{name} - get specific profile
+    - _Requirements: 3.1, 3.2, 3.3_
+
+- [x] 9. Add WebSocket Support
+  - [x] 9.1 Extend WebSocket handler for context queries
+    - Handle "query" message type
+    - Stream "chunk" messages back
+    - Send "complete" message at end
+    - _Requirements: 1.1, 1.4_
+  - [x] 9.2 Implement connection cleanup
+    - Cancel pending operations on disconnect
+    - Release resources gracefully
+    - _Requirements: 6.4_
+
+- [x] 10. Implement Concurrent Request Handling
+  - [x] 10.1 Add async request handling
+    - Use asyncio for concurrent queries
+    - Implement request timeout with partial results
+    - _Requirements: 6.1, 6.2_
+  - [ ]* 10.2 Write property test for concurrent handling
+    - **Property 10: Concurrent Request Handling**
+    - **Validates: Requirements 6.1**
+
+- [x] 11. Final Checkpoint - Ensure all tests pass
+  - Ensure all tests pass, ask the user if questions arise.

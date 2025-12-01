@@ -1,0 +1,33 @@
+# SpecMem Code Owners
+# These owners will be requested for review when someone opens a pull request.
+
+# Global owners (default for all files)
+* @Shashikant86
+
+# Core modules
+/specmem/core/ @Shashikant86
+/specmem/adapters/ @Shashikant86
+/specmem/vectordb/ @Shashikant86
+
+# Impact and diff analysis
+/specmem/impact/ @Shashikant86
+/specmem/diff/ @Shashikant86
+
+# CLI and client
+/specmem/cli/ @Shashikant86
+/specmem/client/ @Shashikant86
+
+# Web UI
+/specmem/ui/ @Shashikant86
+
+# Tests
+/tests/ @Shashikant86
+
+# Documentation
+/docs/ @Shashikant86
+*.md @Shashikant86
+
+# CI/CD and configuration
+/.github/ @Shashikant86
+pyproject.toml @Shashikant86
+.pre-commit-config.yaml @Shashikant86

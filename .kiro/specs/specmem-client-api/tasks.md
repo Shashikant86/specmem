@@ -1,0 +1,119 @@
+# Implementation Plan
+
+- [x] 1. Create Core Data Models
+  - [x] 1.1 Create ContextBundle dataclass
+    - Define fields: specs, designs, tests, tldr, total_tokens, token_budget, changed_files
+    - Add to_dict() and to_markdown() methods
+    - _Requirements: 2.1_
+  - [x] 1.2 Create SpecSummary dataclass
+    - Define fields: id, type, title, summary, source, relevance, pinned
+    - _Requirements: 2.1_
+  - [x] 1.3 Create TestMapping dataclass
+    - Define fields: spec_id, framework, path, tags
+    - _Requirements: 3.2_
+
+- [x] 2. Implement Proposal System
+  - [x] 2.1 Create Proposal and ProposalStatus models
+    - Define ProposalStatus enum (pending, accepted, rejected)
+    - Define Proposal dataclass with id, spec_id, edits, rationale, status, timestamps
+    - _Requirements: 5.1, 5.2_
+  - [x] 2.2 Create ProposalStore class
+    - Implement create(), get(), list(), accept(), reject() methods
+    - Store proposals in .specmem/proposals.json
+    - _Requirements: 5.1, 5.2, 5.3, 5.4_
+  - [x] 2.3 Write property test for proposal creation
+    - **Property 9: Proposal Creation**
+    - **Validates: Requirements 5.1, 5.2**
+  - [x] 2.4 Write property test for proposal state transition
+    - **Property 10: Proposal State Transition**
+    - **Validates: Requirements 5.4**
+
+- [x] 3. Implement SpecMemClient Core
+  - [x] 3.1 Create SpecMemClient class with initialization
+    - Load config from .specmem.toml if present
+    - Initialize memory bank and vector store
+    - Auto-create store if not exists
+    - _Requirements: 1.1, 1.2, 1.3_
+  - [x] 3.2 Write property test for config loading
+    - **Property 1: Config Loading**
+    - **Validates: Requirements 1.1**
+  - [x] 3.3 Write property test for auto-creation
+    - **Property 2: Auto-Creation**
+    - **Validates: Requirements 1.3**
+  - [x] 3.4 Implement list_specs() method
+    - Return all specs with optional status/type filters
+    - _Requirements: 4.3_
+
+- [x] 4. Checkpoint - Ensure all tests pass
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [x] 5. Implement Context Bundle Generation
+  - [x] 5.1 Implement get_context_for_change() method
+    - Query memory bank for relevant specs
+    - Separate into specs, designs, tests categories
+    - Generate TL;DR summary
+    - Optimize for token budget
+    - _Requirements: 2.1, 2.2, 2.3, 2.4_
+  - [x] 5.2 Write property test for context bundle completeness
+    - **Property 3: Context Bundle Completeness**
+    - **Validates: Requirements 2.1**
+  - [x] 5.3 Write property test for token budget compliance
+    - **Property 4: Token Budget Compliance**
+    - **Validates: Requirements 2.2, 6.3**
+
+- [x] 6. Implement Impacted Specs
+  - [x] 6.1 Implement get_impacted_specs() method
+    - Use SpecImpact analyzer for file-based impact
+    - Parse git diff if provided
+    - Return ranked SpecBlock objects
+    - _Requirements: 3.1, 3.2, 3.3, 3.4_
+  - [x] 6.2 Write property test for impacted specs ordering
+    - **Property 5: Impacted Specs Ordering**
+    - **Validates: Requirements 3.1**
+
+- [x] 7. Implement Query Method
+  - [x] 7.1 Implement query() method
+    - Use memory bank semantic search
+    - Respect top_k limit
+    - Filter legacy specs by default
+    - Prioritize pinned specs
+    - _Requirements: 4.1, 4.2, 4.3, 4.4_
+  - [x] 7.2 Write property test for query result limit
+    - **Property 6: Query Result Limit**
+    - **Validates: Requirements 4.2**
+  - [x] 7.3 Write property test for legacy exclusion
+    - **Property 7: Legacy Exclusion**
+    - **Validates: Requirements 4.3**
+  - [x] 7.4 Write property test for pinned priority
+    - **Property 8: Pinned Priority**
+    - **Validates: Requirements 4.4**
+
+- [x] 8. Implement TL;DR and Proposals
+  - [x] 8.1 Implement get_tldr() method
+    - Generate concise summary of key specs
+    - Prioritize pinned and high-relevance specs
+    - Respect token budget
+    - _Requirements: 6.1, 6.2, 6.3, 6.4_
+  - [x] 8.2 Implement propose_edit() method
+    - Create proposal via ProposalStore
+    - Return Proposal object
+    - _Requirements: 5.1, 5.2_
+  - [x] 8.3 Implement accept_proposal() and reject_proposal() methods
+    - Update proposal status
+    - Apply edits to spec on accept
+    - _Requirements: 5.4_
+
+- [x] 9. Add Package-Level Exports
+  - [x] 9.1 Export SpecMemClient from specmem package
+    - Add to specmem/__init__.py
+    - Export ContextBundle, Proposal, SpecMemError
+    - _Requirements: 7.1_
+  - [x] 9.2 Create typed exceptions
+    - Create SpecMemError, ConfigurationError, MemoryStoreError, ProposalError
+    - _Requirements: 7.3_
+  - [x] 9.3 Write property test for exception types
+    - **Property 11: Exception Types**
+    - **Validates: Requirements 7.3**
+
+- [x] 10. Final Checkpoint - Ensure all tests pass
+  - Ensure all tests pass, ask the user if questions arise.

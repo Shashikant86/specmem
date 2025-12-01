@@ -1,0 +1,67 @@
+name: ❓ Question
+description: Ask a question about SpecMem
+title: "[Question]: "
+labels: ["question"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Have a question about SpecMem? We're here to help!
+
+        Before asking, please check:
+        - [README](https://github.com/Shashikant86/specmem#readme)
+        - [Existing issues](https://github.com/Shashikant86/specmem/issues)
+        - [Discussions](https://github.com/Shashikant86/specmem/discussions)
+
+  - type: dropdown
+    id: question-area
+    attributes:
+      label: Question Area
+      description: What area does your question relate to?
+      options:
+        - Installation / Setup
+        - Configuration
+        - CLI Usage
+        - Python API
+        - Adapters (Kiro, Cursor, Claude, etc.)
+        - Vector Databases
+        - Embeddings
+        - SpecImpact Graph
+        - SpecDiff Timeline
+        - Web UI
+        - Integration with coding agents
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: question
+    attributes:
+      label: Your Question
+      description: What would you like to know?
+      placeholder: Describe your question in detail...
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: Any additional context that might help us answer your question
+      placeholder: |
+        - What are you trying to achieve?
+        - What have you tried so far?
+        - Any relevant code or configuration?
+
+  - type: dropdown
+    id: version
+    attributes:
+      label: SpecMem Version
+      description: What version of SpecMem are you using?
+      options:
+        - 0.1.0 (latest)
+        - main branch
+        - Not installed yet
+        - Other

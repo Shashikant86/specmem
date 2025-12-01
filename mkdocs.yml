@@ -1,0 +1,201 @@
+# SpecMem Documentation
+# MkDocs Material Theme Configuration
+
+site_name: SpecMem
+site_description: Cognitive Memory Layer for AI Coding Agents
+site_author: Superagentic AI
+site_url: https://superagenticai.github.io/specmem/
+repo_name: SuperagenticAI/specmem
+repo_url: https://github.com/SuperagenticAI/specmem
+edit_uri: edit/main/docs/
+
+# Copyright
+copyright: Copyright &copy; 2025 Superagentic AI
+
+# Theme Configuration
+theme:
+  name: material
+  custom_dir: docs/overrides
+  logo: assets/logo.png
+  favicon: assets/favicon.png
+  
+  # Color palette for light/dark mode
+  palette:
+    # Light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: deep purple
+      accent: purple
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    
+    # Dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: deep purple
+      accent: purple
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  
+  # Features
+  features:
+    - navigation.instant
+    - navigation.instant.prefetch
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.path
+    - navigation.indexes
+    - navigation.top
+    - navigation.footer
+    - search.suggest
+    - search.highlight
+    - search.share
+    - content.tabs.link
+    - content.code.copy
+    - content.code.annotate
+    - content.action.edit
+    - content.action.view
+    - toc.follow
+    - announce.dismiss
+  
+  # Font
+  font:
+    text: Inter
+    code: JetBrains Mono
+  
+  # Icons
+  icon:
+    repo: fontawesome/brands/github
+    edit: material/pencil
+    view: material/eye
+
+# Plugins
+plugins:
+  - search:
+      separator: '[\s\-,:!=\[\]()"/]+|(?!\b)(?=[A-Z][a-z])|\.(?!\d)|&[lg]t;'
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            show_source: true
+            show_root_heading: true
+            show_category_heading: true
+            docstring_style: google
+
+# Extensions
+markdown_extensions:
+  - abbr
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+      toc_depth: 3
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.caret
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.magiclink:
+      repo_url_shorthand: true
+      user: SuperagenticAI
+      repo: specmem
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+  - pymdownx.snippets:
+      auto_append:
+        - includes/abbreviations.md
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde
+
+# Extra CSS
+extra_css:
+  - stylesheets/extra.css
+
+# Extra JavaScript
+extra_javascript:
+  - javascripts/extra.js
+
+# Extra configuration
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/SuperagenticAI/specmem
+    - icon: fontawesome/brands/python
+      link: https://pypi.org/project/specmem/
+  generator: false
+  analytics:
+    provider: google
+    property: G-XXXXXXXXXX
+  version:
+    provider: mike
+
+# Navigation
+nav:
+  - 🏠 Home: index.md
+  - 🚀 Getting Started:
+    - getting-started/index.md
+    - 📦 Installation: getting-started/installation.md
+    - ⚡ Quick Start: getting-started/quickstart.md
+    - 🔧 Configuration: getting-started/configuration.md
+  - 📚 User Guide:
+    - user-guide/index.md
+    - 🧠 Core Concepts: user-guide/concepts.md
+    - 🔌 Adapters: user-guide/adapters.md
+    - 📊 SpecImpact Graph: user-guide/specimpact.md
+    - ⏱️ SpecDiff Timeline: user-guide/specdiff.md
+    - ✅ SpecValidator: user-guide/validator.md
+    - 🎯 Selective Testing: user-guide/selective-testing.md
+    - 🌐 Web UI: user-guide/web-ui.md
+  - 💻 CLI Reference:
+    - cli/index.md
+    - specmem init: cli/init.md
+    - specmem scan: cli/scan.md
+    - specmem build: cli/build.md
+    - specmem query: cli/query.md
+    - specmem impact: cli/impact.md
+    - specmem validate: cli/validate.md
+    - specmem serve: cli/serve.md
+  - 🐍 Python API:
+    - api/index.md
+    - SpecMemClient: api/client.md
+    - Memory Bank: api/memory-bank.md
+    - Vector Stores: api/vectordb.md
+    - Adapters: api/adapters.md
+    - Impact Graph: api/impact-graph.md
+  - 🔧 Advanced:
+    - advanced/index.md
+    - ✍️ Writing Adapters: advanced/writing-adapters.md
+    - 🗄️ Vector Backends: advanced/vector-backends.md
+    - ☁️ Cloud Embeddings: advanced/cloud-embeddings.md
+    - 🔗 Agent Integration: advanced/agent-integration.md
+  - 📖 Reference:
+    - reference/index.md
+    - Configuration Options: reference/configuration.md
+    - Environment Variables: reference/environment.md
+    - Spec IR Format: reference/spec-ir.md

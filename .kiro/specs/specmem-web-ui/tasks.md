@@ -1,0 +1,219 @@
+# Implementation Plan
+
+## Epic: SpecMem Web UI Implementation
+
+- [x] 1. Project Setup and Dependencies
+  - [x] 1.1 Add web UI dependencies to pyproject.toml
+    - Add FastAPI, uvicorn, websockets to dependencies
+    - Add optional `ui` extra for frontend build tools
+    - _Requirements: 1.1_
+  - [x] 1.2 Create UI package structure
+    - Create `specmem/ui/` directory with `__init__.py`
+    - Create placeholder files: `server.py`, `api.py`, `models.py`
+    - _Requirements: 1.1_
+
+- [x] 2. API Models and Response Types
+  - [x] 2.1 Implement API response models
+    - Create `BlockSummary`, `BlockDetail`, `BlockListResponse` Pydantic models
+    - Create `StatsResponse`, `SearchResponse`, `SearchResult` models
+    - Create `ExportResponse` model
+    - Implement text truncation helper (200 char limit with ellipsis)
+    - _Requirements: 2.3, 2.4_
+  - [x] 2.2 Write property test for text truncation
+    - **Property 3: Text Truncation Consistency**
+    - **Validates: Requirements 2.4**
+  - [x] 2.3 Write property test for block response completeness
+    - **Property 2: Block Response Completeness**
+    - **Validates: Requirements 2.3**
+
+- [x] 3. Filter and Query Logic
+  - [x] 3.1 Implement filter functions
+    - Create `filter_blocks()` function with status and type filters
+    - Implement AND logic for combined filters
+    - Add count calculation for filtered results
+    - _Requirements: 3.2, 3.3, 3.4, 4.2, 4.3_
+  - [x] 3.2 Write property test for filter correctness
+    - **Property 4: Filter Correctness**
+    - **Validates: Requirements 3.2, 3.3, 3.4, 3.5, 4.2, 4.3, 4.4**
+
+- [x] 4. Checkpoint - Ensure all tests pass
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [x] 5. REST API Endpoints
+  - [x] 5.1 Implement blocks endpoint
+    - Create `GET /api/blocks` with query params for status and type filters
+    - Create `GET /api/blocks/{id}` for single block details
+    - Return `BlockListResponse` and `BlockDetail` respectively
+    - _Requirements: 2.1, 2.2, 2.3, 3.2, 3.3, 3.4, 4.2_
+  - [x] 5.2 Implement stats endpoint
+    - Create `GET /api/stats` returning `StatsResponse`
+    - Calculate counts by type, by source, total memory size
+    - _Requirements: 8.1, 8.2, 8.3_
+  - [x] 5.3 Write property test for statistics accuracy
+    - **Property 7: Statistics Accuracy**
+    - **Validates: Requirements 2.1, 8.1, 8.2**
+  - [x] 5.4 Implement search endpoint
+    - Create `GET /api/search` with query parameter `q`
+    - Call vector store query and return results with scores
+    - Order results by descending relevance score
+    - _Requirements: 5.2, 5.3, 5.4_
+  - [x] 5.5 Write property test for search result ordering
+    - **Property 5: Search Result Ordering**
+    - **Validates: Requirements 5.3, 5.4**
+  - [x] 5.6 Implement pinned endpoint
+    - Create `GET /api/pinned` returning all pinned blocks
+    - Include pinned indicator in response
+    - _Requirements: 6.1, 6.2, 6.3_
+  - [x] 5.7 Write property test for pinned block retrieval
+    - **Property 6: Pinned Block Retrieval**
+    - **Validates: Requirements 6.1, 6.3**
+  - [x] 5.8 Implement export endpoint
+    - Create `POST /api/export` triggering PackBuilder
+    - Return success status and output path
+    - Handle errors gracefully
+    - _Requirements: 7.2, 7.3, 7.4_
+
+- [x] 6. Checkpoint - Ensure all tests pass
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [x] 7. Web Server Implementation
+  - [x] 7.1 Implement WebServer class
+    - Create FastAPI app with CORS middleware
+    - Mount API router under `/api`
+    - Configure static file serving for frontend
+    - _Requirements: 1.1_
+  - [x] 7.2 Implement port configuration
+    - Accept port parameter (default 8765)
+    - Implement port availability check
+    - Find alternative port if specified port is in use
+    - _Requirements: 1.3, 1.4_
+  - [x] 7.3 Write property test for port configuration
+    - **Property 1: Server Port Configuration**
+    - **Validates: Requirements 1.1, 1.3**
+  - [x] 7.4 Implement graceful shutdown
+    - Handle SIGINT/SIGTERM signals
+    - Clean up resources on shutdown
+    - _Requirements: 1.5_
+
+- [x] 8. CLI Integration
+  - [x] 8.1 Implement `specmem serve` command
+    - Add serve command to CLI with `--port` option
+    - Display server URL with Rich formatting
+    - Start WebServer and block until shutdown
+    - _Requirements: 1.1, 1.2, 1.3_
+  - [x] 8.2 Write unit tests for serve command
+    - Test command accepts port option
+    - Test error handling for invalid port
+    - _Requirements: 1.1, 1.3_
+
+- [x] 9. Checkpoint - Ensure all tests pass
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [x] 10. Frontend Foundation
+  - [x] 10.1 Set up React project with Vite
+    - Create `specmem/ui/frontend/` directory
+    - Initialize Vite + React + TypeScript project
+    - Configure Tailwind CSS
+    - _Requirements: 10.1, 10.2, 10.3_
+  - [x] 10.2 Create base layout components
+    - Implement Header with logo and dark mode toggle
+    - Implement Sidebar with navigation
+    - Implement MainContent wrapper with responsive grid
+    - _Requirements: 10.1, 10.2_
+  - [x] 10.3 Set up API client and React Query
+    - Create typed API client for all endpoints
+    - Configure React Query for data fetching
+    - Set up error handling
+    - _Requirements: 2.1, 5.2_
+
+- [x] 11. Dashboard Components
+  - [x] 11.1 Implement SummaryCards component
+    - Display total, active, legacy, pinned counts
+    - Update counts when filters change
+    - _Requirements: 2.1, 3.5_
+  - [x] 11.2 Implement FilterBar component
+    - Create StatusFilter dropdown (All/Active/Legacy)
+    - Create TypeFilter dropdown (All/Requirement/Design/Task/...)
+    - Wire filters to API calls
+    - _Requirements: 3.1, 4.1_
+  - [x] 11.3 Implement BlockList component
+    - Display blocks as cards in responsive grid
+    - Show id, type badge, text preview, source, status, pinned icon
+    - Handle click to open detail modal
+    - _Requirements: 2.2, 2.3, 2.4_
+  - [x] 11.4 Implement BlockDetailModal component
+    - Display full block details in modal/side panel
+    - Show all fields including tags and links
+    - _Requirements: 2.5_
+
+- [x] 12. Search and Pinned Views
+  - [x] 12.1 Implement SearchBox component
+    - Create search input with submit button
+    - Display search results with relevance scores
+    - Show "No results" message when empty
+    - _Requirements: 5.1, 5.3, 5.4, 5.5_
+  - [x] 12.2 Implement PinnedView component
+    - Display all pinned blocks in dedicated section
+    - Show pinned indicator and reason
+    - _Requirements: 6.1, 6.2, 6.3_
+
+- [x] 13. Statistics and Export
+  - [x] 13.1 Implement StatsPanel component
+    - Display block counts by type as bar chart
+    - Display block counts by source as list
+    - Show total memory size
+    - _Requirements: 8.1, 8.2, 8.3, 8.4_
+  - [x] 13.2 Implement ExportButton component
+    - Trigger export API on click
+    - Show loading state during export
+    - Display success/error toast notification
+    - _Requirements: 7.1, 7.2, 7.3, 7.4_
+
+- [x] 14. Live Updates (WebSocket)
+  - [x] 14.1 Implement WebSocket endpoint
+    - Create `/api/ws` WebSocket endpoint
+    - Broadcast updates when memory changes
+    - _Requirements: 9.2_
+  - [x] 14.2 Implement file watcher
+    - Watch spec files for changes
+    - Trigger refresh notification on change
+    - _Requirements: 9.1_
+  - [x] 14.3 Implement frontend WebSocket client
+    - Connect to WebSocket on mount
+    - Invalidate React Query cache on update message
+    - Show refresh notification
+    - _Requirements: 9.2, 9.3_
+  - [x] 14.4 Implement auto-refresh toggle
+    - Add toggle in settings/header
+    - Persist preference in localStorage
+    - _Requirements: 9.4_
+
+- [x] 15. Styling and Polish
+  - [x] 15.1 Implement dark mode
+    - Add dark mode CSS variables
+    - Implement toggle with system preference detection
+    - Persist preference in localStorage
+    - _Requirements: 10.1_
+  - [x] 15.2 Responsive design polish
+    - Test and fix layout on mobile/tablet sizes
+    - Ensure touch-friendly interactions
+    - _Requirements: 10.2_
+  - [x] 15.3 Performance optimization
+    - Implement virtual scrolling for large block lists
+    - Optimize bundle size
+    - Ensure <2s load time
+    - _Requirements: 10.4_
+
+- [x] 16. Build and Integration
+  - [x] 16.1 Configure frontend build
+    - Set up Vite build to output to `specmem/ui/static/`
+    - Configure FastAPI to serve built assets
+    - _Requirements: 1.1_
+  - [x] 16.2 Add build script to pyproject.toml
+    - Create script to build frontend during package install
+    - Include pre-built assets in package distribution
+    - _Requirements: 1.1_
+
+- [x] 17. Final Checkpoint - Ensure all tests pass
+  - Ensure all tests pass, ask the user if questions arise.
+

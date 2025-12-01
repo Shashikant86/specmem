@@ -1,0 +1,240 @@
+# Implementation Plan
+
+- [x] 1. Create Core Data Models
+  - [x] 1.1 Create ChangeType and Severity enums
+    - Define SEMANTIC, COSMETIC, BREAKING, ADDITION, REMOVAL change types
+    - Define LOW, MEDIUM, HIGH, CRITICAL severity levels
+    - _Requirements: 1.5, 4.4_
+  - [x] 1.2 Create SpecVersion dataclass
+    - Define fields: spec_id, version_id, timestamp, commit_ref, content_hash, content, metadata
+    - Add to_dict() and from_dict() methods
+    - Add content hashing utility
+    - _Requirements: 1.1, 9.2_
+  - [x] 1.3 Create ChangeReason dataclass
+    - Define fields: reason, confidence, source, alternatives
+    - Add to_dict() and from_dict() methods
+    - _Requirements: 2.1, 2.4_
+  - [x] 1.4 Create SpecChange dataclass
+    - Define fields: spec_id, from_version, to_version, timestamp, added, removed, modified, change_type, inferred_reason
+    - Add is_breaking() method
+    - Add to_dict() and from_dict() methods
+    - _Requirements: 1.2, 1.3_
+  - [x] 1.5 Write property test for change reason confidence range
+    - **Property 4: Change Reason Confidence Range**
+    - **Validates: Requirements 2.4**
+
+- [x] 2. Create Warning and Report Models
+  - [x] 2.1 Create StalenessWarning dataclass
+    - Define fields: spec_id, cached_version, current_version, changes_since, severity, acknowledged
+    - Add to_dict() and from_dict() methods
+    - _Requirements: 4.1, 4.2_
+  - [x] 2.2 Create DriftItem and DriftReport dataclasses
+    - DriftItem: code_path, spec_id, spec_change, severity, suggested_action
+    - DriftReport: drifted_code, total_drift_score, generated_at
+    - Add get_by_severity() method
+    - _Requirements: 3.1, 3.2, 3.3_
+  - [x] 2.3 Create Contradiction dataclass
+    - Define fields: spec_id, old_text, new_text, conflict_type, resolution_hint
+    - Add to_dict() and from_dict() methods
+    - _Requirements: 5.2, 5.3_
+  - [x] 2.4 Create Deprecation dataclass
+    - Define fields: spec_id, deprecated_at, deadline, replacement_spec_id, affected_code, urgency
+    - Add days_remaining() method
+    - Add to_dict() and from_dict() methods
+    - _Requirements: 6.1, 6.4_
+  - [x] 2.5 Write property test for drift severity range
+    - **Property 7: Drift Severity Range**
+    - **Validates: Requirements 3.2**
+
+- [x] 3. Checkpoint - Ensure all tests pass
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [x] 4. Implement Storage Layer
+  - [x] 4.1 Create SQLite schema for version storage
+    - Create spec_versions table
+    - Create staleness_acks table
+    - Create deprecations table
+    - Add indexes for performance
+    - _Requirements: 9.1_
+  - [x] 4.2 Implement VersionStore class
+    - CRUD operations for spec versions
+    - Query by spec_id and timestamp
+    - Content hash comparison
+    - _Requirements: 1.1, 9.1_
+  - [x] 4.3 Implement version pruning
+    - Delete versions older than threshold
+    - Keep minimum number of versions
+    - _Requirements: 9.5_
+  - [x] 4.4 Write property test for history pruning preserves minimum
+    - **Property 18: History Pruning Preserves Minimum**
+    - **Validates: Requirements 9.5**
+
+- [x] 5. Implement SpecDiff Core
+  - [x] 5.1 Create SpecDiff class with storage
+    - Initialize with storage path
+    - Integrate with SpecImpactGraph
+    - Implement load/save methods
+    - _Requirements: 8.1_
+  - [x] 5.2 Implement get_history method
+    - Return versions ordered by timestamp
+    - Support limit parameter
+    - Handle no history case
+    - _Requirements: 1.1, 1.4_
+  - [x] 5.3 Implement track_version method
+    - Create new version from spec
+    - Use git commit as version_id when available
+    - Fall back to timestamp when git unavailable
+    - _Requirements: 9.1, 9.2, 9.3_
+  - [x] 5.4 Write property test for version history chronological order
+    - **Property 1: Version History Chronological Order**
+    - **Validates: Requirements 1.1**
+  - [x] 5.5 Write property test for version auto-creation
+    - **Property 16: Version Auto-Creation**
+    - **Validates: Requirements 9.1**
+  - [x] 5.6 Write property test for git commit as version ID
+    - **Property 17: Git Commit as Version ID**
+    - **Validates: Requirements 9.2**
+
+- [x] 6. Implement Diff Engine
+  - [x] 6.1 Implement get_diff method
+    - Compute textual diff between versions
+    - Identify added, removed, modified sections
+    - Classify change type
+    - _Requirements: 1.2, 1.5_
+  - [x] 6.2 Implement change reason inference
+    - Analyze commit messages for reasons
+    - Calculate confidence scores
+    - Rank alternatives by confidence
+    - _Requirements: 2.1, 2.2, 2.4, 2.5_
+  - [x] 6.3 Write property test for diff completeness
+    - **Property 2: Diff Completeness**
+    - **Validates: Requirements 1.2**
+  - [x] 6.4 Write property test for change metadata completeness
+    - **Property 3: Change Metadata Completeness**
+    - **Validates: Requirements 1.3**
+  - [x] 6.5 Write property test for change reasons ordered by confidence
+    - **Property 5: Change Reasons Ordered by Confidence**
+    - **Validates: Requirements 2.5**
+
+- [x] 7. Checkpoint - Ensure all tests pass
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [x] 8. Implement Staleness Detection
+  - [x] 8.1 Implement check_staleness method
+    - Compare cached versions with current
+    - Generate warnings with severity
+    - Include changes since cached version
+    - _Requirements: 4.1, 4.2, 4.3_
+  - [x] 8.2 Implement acknowledge_staleness method
+    - Record acknowledgment in database
+    - Update warning status
+    - _Requirements: 4.5_
+  - [x] 8.3 Implement critical staleness detection
+    - Flag breaking changes as CRITICAL
+    - Calculate severity based on change type
+    - _Requirements: 4.4_
+  - [x] 8.4 Write property test for staleness detection accuracy
+    - **Property 9: Staleness Detection Accuracy**
+    - **Validates: Requirements 4.1, 4.2**
+  - [x] 8.5 Write property test for staleness warning includes diff
+    - **Property 10: Staleness Warning Includes Diff**
+    - **Validates: Requirements 4.3**
+  - [x] 8.6 Write property test for critical staleness for breaking changes
+    - **Property 11: Critical Staleness for Breaking Changes**
+    - **Validates: Requirements 4.4**
+  - [x] 8.7 Write property test for acknowledgment persistence
+    - **Property 12: Acknowledgment Persistence**
+    - **Validates: Requirements 4.5**
+
+- [x] 9. Implement Drift Detection
+  - [x] 9.1 Implement get_drift_report method
+    - Use SpecImpactGraph to find linked code
+    - Calculate drift severity
+    - Generate suggested actions
+    - _Requirements: 3.1, 3.2, 3.4_
+  - [x] 9.2 Integrate with SpecImpactGraph
+    - Query code for changed specs
+    - Calculate drift based on change severity
+    - _Requirements: 3.1, 3.3_
+  - [x] 9.3 Write property test for drift detection completeness
+    - **Property 6: Drift Detection Completeness**
+    - **Validates: Requirements 3.1**
+  - [x] 9.4 Write property test for drift references spec change
+    - **Property 8: Drift References Spec Change**
+    - **Validates: Requirements 3.3**
+
+- [x] 10. Implement Contradiction and Deprecation
+  - [x] 10.1 Implement get_contradictions method
+    - Compare spec versions for conflicts
+    - Identify contradictory statements
+    - Generate resolution hints
+    - _Requirements: 5.1, 5.2, 5.4_
+  - [x] 10.2 Implement get_deprecations method
+    - Query deprecated specs
+    - Calculate urgency and time remaining
+    - Sort by urgency
+    - _Requirements: 6.1, 6.4, 6.5_
+  - [x] 10.3 Implement deprecation tracking
+    - Mark specs as deprecated
+    - Track replacement specs
+    - Find affected code
+    - _Requirements: 6.2, 6.3_
+  - [x] 10.4 Write property test for contradiction includes both versions
+    - **Property 13: Contradiction Includes Both Versions**
+    - **Validates: Requirements 5.2, 5.3**
+  - [x] 10.5 Write property test for deprecation date tracking
+    - **Property 14: Deprecation Date Tracking**
+    - **Validates: Requirements 6.1**
+  - [x] 10.6 Write property test for deprecation urgency ordering
+    - **Property 15: Deprecation Urgency Ordering**
+    - **Validates: Requirements 6.5**
+
+- [x] 11. Checkpoint - Ensure all tests pass
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [x] 12. Implement CLI Commands
+  - [x] 12.1 Implement `specmem diff` command
+    - Accept spec_id argument
+    - Show recent changes
+    - Support --from and --to version options
+    - _Requirements: 7.1_
+  - [x] 12.2 Implement `specmem history` command
+    - Accept spec_id argument
+    - Show version timeline
+    - Support --limit option
+    - _Requirements: 7.2_
+  - [x] 12.3 Implement `specmem drift` command
+    - Show all detected drift
+    - Support --severity filter
+    - _Requirements: 7.3_
+  - [x] 12.4 Implement `specmem stale` command
+    - Show stale memories
+    - Support --acknowledge option
+    - _Requirements: 7.4_
+  - [x] 12.5 Implement `specmem deprecations` command
+    - List deprecated specs
+    - Show urgency and deadlines
+    - _Requirements: 7.5_
+  - [x] 12.6 Write unit tests for CLI commands
+    - Test each command with valid inputs
+    - Test error handling
+    - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5_
+
+- [x] 13. Integrate with SpecMemClient
+  - [x] 13.1 Add specdiff property to SpecMemClient
+    - Lazy-load SpecDiff on first access
+    - Build version history if not exists
+    - _Requirements: 8.1_
+  - [x] 13.2 Add temporal query methods to SpecMemClient
+    - get_spec_history(spec_id)
+    - get_spec_diff(spec_id, from_version, to_version)
+    - check_staleness(spec_ids)
+    - _Requirements: 8.1, 8.2, 8.3_
+  - [x] 13.3 Add drift and deprecation methods
+    - get_drift_report()
+    - get_contradictions(spec_id)
+    - get_deprecations()
+    - _Requirements: 8.4, 8.5_
+
+- [x] 14. Final Checkpoint - Ensure all tests pass
+  - Ensure all tests pass, ask the user if questions arise.

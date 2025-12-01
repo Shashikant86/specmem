@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 Discussions
+    url: https://github.com/Shashikant86/specmem/discussions
+    about: Ask questions and discuss ideas with the community
+  - name: 📖 Documentation
+    url: https://github.com/Shashikant86/specmem#readme
+    about: Read the documentation before opening an issue
+  - name: 🏢 Superagentic AI
+    url: https://super-agentic.ai
+    about: Learn more about Superagentic AI
