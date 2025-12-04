@@ -1,0 +1,198 @@
+# Implementation Plan
+
+- [x] 1. Create Core Data Models
+  - [x] 1.1 Create AcceptanceCriterion dataclass
+    - Define fields: id, number, text, requirement_id, user_story, feature_name
+    - Add to_dict() and from_dict() methods
+    - Add validation for required fields
+    - _Requirements: 3.1, 3.2, 3.3, 3.4_
+  - [x] 1.2 Create ExtractedTest dataclass
+    - Define fields: name, file_path, line_number, docstring, requirement_links, framework, selector
+    - Add to_dict() and from_dict() methods
+    - _Requirements: 4.2, 4.3, 4.4_
+  - [x] 1.3 Create CriteriaMatch dataclass
+    - Define fields: criterion, test, confidence, is_covered
+    - Add to_dict() method
+    - Add is_covered property based on confidence threshold
+    - _Requirements: 5.3, 5.4_
+  - [x] 1.4 Create FeatureCoverage dataclass
+    - Define fields: feature_name, criteria, tested_count, total_count
+    - Add coverage_percentage and gap_percentage properties
+    - Add to_dict() method
+    - _Requirements: 1.3, 2.1_
+  - [x] 1.5 Create CoverageResult dataclass
+    - Define fields: features, suggestions
+    - Add total_criteria, covered_criteria, coverage_percentage properties
+    - Add to_dict(), to_json(), to_markdown() methods
+    - _Requirements: 1.1, 1.2, 8.1, 8.2_
+  - [x] 1.6 Create TestSuggestion dataclass
+    - Define fields: criterion, suggested_file, suggested_name, verification_points
+    - Add to_dict() method
+    - _Requirements: 6.2, 6.3, 6.4_
+  - [x] 1.7 Write property test for coverage calculation consistency
+    - **Property 1: Coverage Calculation Consistency**
+    - **Validates: Requirements 1.3**
+
+- [x] 2. Checkpoint - Ensure all tests pass
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [x] 3. Implement Criteria Extractor
+  - [x] 3.1 Create CriteriaExtractor class
+    - Initialize with workspace path
+    - Implement extract_from_spec() method
+    - _Requirements: 3.1_
+  - [x] 3.2 Implement requirements.md parser
+    - Parse markdown to find acceptance criteria sections
+    - Extract numbered criteria with EARS format text
+    - Link criteria to parent requirement and user story
+    - _Requirements: 3.1, 3.2, 3.3, 3.4_
+  - [x] 3.3 Implement extract_all() method
+    - Scan .kiro/specs directory for all features
+    - Return dict mapping feature names to criteria lists
+    - _Requirements: 3.1_
+  - [x] 3.4 Write property test for criteria extraction completeness
+    - **Property 2: Criteria Extraction Completeness**
+    - **Validates: Requirements 3.1, 3.2, 3.3, 3.4**
+
+- [x] 4. Implement Test Scanner
+  - [x] 4.1 Create TestScanner class
+    - Initialize with workspace path
+    - Leverage existing TestMappingEngine for framework detection
+    - _Requirements: 4.1_
+  - [x] 4.2 Implement scan_tests() method
+    - Scan test files for all detected frameworks
+    - Extract test name, file path, line number
+    - Extract docstrings and comments
+    - _Requirements: 4.1, 4.2, 4.3_
+  - [x] 4.3 Implement extract_requirement_links() method
+    - Parse docstrings for "Validates: X.Y" patterns
+    - Parse comments for requirement references
+    - Return list of linked requirement numbers
+    - _Requirements: 4.4_
+  - [x] 4.4 Write property test for test extraction completeness
+    - **Property 3: Test Extraction Completeness**
+    - **Validates: Requirements 4.1, 4.2, 4.4**
+
+- [x] 5. Checkpoint - Ensure all tests pass
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [x] 6. Implement Criteria Matcher
+  - [x] 6.1 Create CriteriaMatcher class
+    - Define CONFIDENCE_THRESHOLD = 0.5
+    - Initialize matcher
+    - _Requirements: 5.4_
+  - [x] 6.2 Implement match() method
+    - Match criteria to tests
+    - Handle explicit links with confidence 1.0
+    - Use similarity for non-explicit matches
+    - Select highest confidence match when multiple tests match
+    - _Requirements: 5.1, 5.2, 5.5_
+  - [x] 6.3 Implement calculate_similarity() method
+    - Use text similarity scoring
+    - Consider test name, docstring, and criterion text
+    - Return confidence between 0.0 and 1.0
+    - _Requirements: 5.1, 5.3_
+  - [x] 6.4 Write property test for confidence score range
+    - **Property 4: Confidence Score Range**
+    - **Validates: Requirements 5.2, 5.3**
+  - [x] 6.5 Write property test for coverage threshold behavior
+    - **Property 5: Coverage Threshold Behavior**
+    - **Validates: Requirements 5.4**
+  - [x] 6.6 Write property test for highest confidence selection
+    - **Property 6: Highest Confidence Selection**
+    - **Validates: Requirements 5.5**
+
+- [x] 7. Implement Coverage Engine
+  - [x] 7.1 Create CoverageEngine class
+    - Initialize with workspace path
+    - Create CriteriaExtractor, TestScanner, CriteriaMatcher instances
+    - _Requirements: 1.1_
+  - [x] 7.2 Implement analyze_coverage() method
+    - Extract all criteria from specs
+    - Scan all tests
+    - Match criteria to tests
+    - Build CoverageResult with all features
+    - _Requirements: 1.1, 1.2_
+  - [x] 7.3 Implement analyze_feature() method
+    - Extract criteria for specific feature
+    - Match to tests
+    - Return FeatureCoverage
+    - _Requirements: 2.1, 2.2_
+  - [x] 7.4 Implement get_suggestions() method
+    - Find uncovered criteria
+    - Generate TestSuggestion for each
+    - Recommend file path, function name, verification points
+    - _Requirements: 6.1, 6.2, 6.3, 6.4_
+  - [x] 7.5 Write property test for suggestion completeness
+    - **Property 7: Suggestion Completeness**
+    - **Validates: Requirements 6.2, 6.3, 6.4**
+
+- [x] 8. Checkpoint - Ensure all tests pass
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [x] 9. Implement Badge and Export
+  - [x] 9.1 Implement generate_badge() method
+    - Calculate coverage percentage
+    - Determine badge color based on thresholds
+    - Return badge markdown/URL
+    - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5_
+  - [x] 9.2 Implement export() method
+    - Support JSON format
+    - Support markdown format
+    - Include all features, criteria, mappings, confidence scores
+    - _Requirements: 8.1, 8.2, 8.3, 8.4_
+  - [x] 9.3 Write property test for badge color thresholds
+    - **Property 8: Badge Color Thresholds**
+    - **Validates: Requirements 7.3, 7.4, 7.5**
+  - [x] 9.4 Write property test for export round-trip
+    - **Property 9: Export Round-Trip**
+    - **Validates: Requirements 8.1, 8.3, 8.4**
+
+- [x] 10. Implement CLI Commands
+  - [x] 10.1 Implement `specmem cov` base command
+    - Display overall coverage summary
+    - Show table of features with tested/total counts
+    - Show warning/success indicators based on coverage
+    - _Requirements: 1.1, 1.2, 1.4, 1.5_
+  - [x] 10.2 Implement `specmem cov report` subcommand
+    - Accept optional feature argument
+    - Display detailed coverage for feature
+    - Show each criterion with status and linked test
+    - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5_
+  - [x] 10.3 Implement `specmem cov suggest` subcommand
+    - Accept feature argument
+    - Display uncovered criteria with suggestions
+    - Show recommended file, function name, verification points
+    - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5_
+  - [x] 10.4 Implement `specmem cov badge` subcommand
+    - Generate badge markdown
+    - Support --output flag for file
+    - _Requirements: 7.1, 7.2_
+  - [x] 10.5 Implement `specmem cov export` subcommand
+    - Support --format flag (json, markdown)
+    - Support --output flag for file path
+    - _Requirements: 8.1, 8.2, 8.5_
+  - [x] 10.6 Write unit tests for CLI commands
+    - Test `specmem cov` summary output
+    - Test `specmem cov report` with feature
+    - Test `specmem cov suggest` with feature
+    - Test `specmem cov badge` output
+    - Test `specmem cov export` formats
+    - _Requirements: 1.1, 2.1, 6.1, 7.1, 8.1_
+
+- [x] 11. Integrate with SpecMemClient API
+  - [x] 11.1 Add get_coverage() method to SpecMemClient
+    - Accept optional feature parameter
+    - Return CoverageResult object
+    - Include suggestions for uncovered criteria
+    - _Requirements: 9.1, 9.2, 9.3, 9.4_
+  - [x] 11.2 Handle edge case of no specs
+    - Return empty CoverageResult without errors
+    - _Requirements: 9.5_
+  - [x] 11.3 Write property test for API result completeness
+    - **Property 10: API Result Completeness**
+    - **Validates: Requirements 9.1, 9.3, 9.4**
+
+- [x] 12. Final Checkpoint - Ensure all tests pass
+  - Ensure all tests pass, ask the user if questions arise.
+

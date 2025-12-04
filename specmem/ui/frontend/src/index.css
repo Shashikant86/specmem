@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -25,6 +27,126 @@
   * {
     @apply border-slate-200 dark:border-slate-700;
   }
+}
+
+/* Brand Logo Font */
+.brand-logo {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+}
+
+/* Gradient Text Animation - Purple to Pink to Orange */
+.gradient-text {
+  background: linear-gradient(
+    90deg,
+    #8b5cf6 0%,
+    #a855f7 20%,
+    #d946ef 40%,
+    #ec4899 60%,
+    #f97316 80%,
+    #fb923c 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  background-size: 200% auto;
+  animation: gradient-shift 4s ease-in-out infinite;
+}
+
+.gradient-text-static {
+  background: linear-gradient(
+    135deg,
+    #8b5cf6 0%,
+    #a855f7 25%,
+    #d946ef 50%,
+    #ec4899 75%,
+    #f97316 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Larger gradient text for hero */
+.gradient-text-hero {
+  background: linear-gradient(
+    90deg,
+    #7c3aed 0%,
+    #8b5cf6 15%,
+    #a855f7 30%,
+    #d946ef 45%,
+    #ec4899 60%,
+    #f97316 75%,
+    #fb923c 90%,
+    #7c3aed 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  background-size: 200% auto;
+  animation: gradient-shift 3s linear infinite;
+  filter: drop-shadow(0 0 30px rgba(139, 92, 246, 0.3));
+}
+
+@keyframes gradient-shift {
+  0% { background-position: 0% center; }
+  100% { background-position: 200% center; }
+}
+
+/* Hero Background Animation */
+.hero-bg {
+  background: linear-gradient(
+    135deg,
+    rgba(139, 92, 246, 0.15) 0%,
+    rgba(168, 85, 247, 0.12) 15%,
+    rgba(217, 70, 239, 0.1) 30%,
+    rgba(236, 72, 153, 0.08) 45%,
+    rgba(249, 115, 22, 0.1) 60%,
+    rgba(251, 146, 60, 0.08) 75%,
+    rgba(139, 92, 246, 0.15) 100%
+  );
+  background-size: 400% 400%;
+  animation: hero-gradient 20s ease infinite;
+}
+
+.dark .hero-bg {
+  background: linear-gradient(
+    135deg,
+    rgba(139, 92, 246, 0.2) 0%,
+    rgba(168, 85, 247, 0.15) 15%,
+    rgba(217, 70, 239, 0.12) 30%,
+    rgba(236, 72, 153, 0.1) 45%,
+    rgba(249, 115, 22, 0.12) 60%,
+    rgba(251, 146, 60, 0.1) 75%,
+    rgba(139, 92, 246, 0.2) 100%
+  );
+  background-size: 400% 400%;
+  animation: hero-gradient 20s ease infinite;
+}
+
+@keyframes hero-gradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Floating Animation */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Glow Effect */
+.glow-purple {
+  box-shadow: 0 0 40px rgba(139, 92, 246, 0.3), 0 0 80px rgba(139, 92, 246, 0.1);
+}
+
+.glow-text {
+  text-shadow: 0 0 40px rgba(139, 92, 246, 0.5), 0 0 80px rgba(217, 70, 239, 0.3);
 }
 
 @layer components {
@@ -108,4 +230,68 @@
   50% {
     opacity: .5;
   }
+}
+
+/* Fade In Animation */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out;
+}
+
+/* Scale In Animation */
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-scale-in {
+  animation: scale-in 0.2s ease-out;
+}
+
+/* Slide In Animation */
+@keyframes slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-slide-in {
+  animation: slide-in 0.3s ease-out;
+}
+
+/* Shimmer Effect for Loading */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
 }

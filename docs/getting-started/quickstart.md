@@ -151,9 +151,25 @@ Launch the interactive web interface:
 specmem serve
 ```
 
-Open [http://localhost:8000](http://localhost:8000) in your browser.
+Open [http://localhost:8765](http://localhost:8765) in your browser to explore your specs visually.
 
-![SpecMem Web UI](../assets/web-ui-screenshot.png)
+The Web UI provides:
+
+- **Dashboard** - Health score, stats, and quick actions
+- **Specifications** - Browse and filter all indexed specs
+- **Search** - Semantic search across your specs
+- **Coverage** - See which acceptance criteria have tests
+- **Impact Graph** - Visualize spec ↔ code ↔ test relationships
+
+### Demo Mode
+
+Try SpecMem instantly with its own specs:
+
+```bash
+specmem demo
+```
+
+This copies SpecMem's own specifications, builds the index, and opens the UI.
 
 ## What's Next?
 

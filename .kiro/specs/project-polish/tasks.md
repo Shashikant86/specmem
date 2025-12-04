@@ -1,0 +1,202 @@
+# Implementation Plan
+
+- [x] 1. Implement Health Score Engine
+  - [x] 1.1 Create health score data models and interfaces
+    - Create `HealthScore` dataclass with overall_score, letter_grade, breakdown, suggestions
+    - Create `HealthScoreEngine` class with calculate() method
+    - _Requirements: 6.1, 6.2_
+  - [x] 1.2 Write property test for grade mapping
+    - **Property 1: Health Score Grade Mapping**
+    - **Validates: Requirements 1.2, 6.2**
+  - [x] 1.3 Implement health score calculation logic
+    - Calculate coverage score from CoverageEngine
+    - Calculate validation score from SpecValidator
+    - Calculate freshness score from file modification times
+    - Calculate completeness score from spec structure analysis
+    - Compute weighted average for overall score
+    - _Requirements: 6.1_
+  - [x] 1.4 Write property test for calculation consistency
+    - **Property 2: Health Score Calculation Consistency**
+    - **Validates: Requirements 6.1**
+  - [x] 1.5 Implement suggestions generator
+    - Generate suggestions based on low-scoring categories
+    - Prioritize actionable improvements
+    - _Requirements: 6.3_
+  - [x] 1.6 Write property test for low score suggestions
+    - **Property 3: Low Score Suggestions**
+    - **Validates: Requirements 6.3**
+
+- [x] 2. Implement File Watcher Service
+  - [x] 2.1 Create file watcher with watchdog
+    - Set up watchdog observer for spec file patterns
+    - Implement debounce logic for rapid changes
+    - _Requirements: 3.1, 3.4_
+  - [x] 2.2 Write property test for debounce
+    - **Property 5: Debounce Rapid Changes**
+    - **Validates: Requirements 3.4**
+  - [x] 2.3 Integrate file watcher with WebSocket
+    - Emit WebSocket messages on spec changes
+    - Include updated spec data in messages
+    - _Requirements: 3.2_
+  - [x] 2.4 Write property test for WebSocket updates
+    - **Property 4: WebSocket Update on Change**
+    - **Validates: Requirements 3.2**
+
+- [x] 3. Implement Impact Graph Builder
+  - [x] 3.1 Create graph data models
+    - Create `GraphNode` and `GraphEdge` dataclasses
+    - Create `ImpactGraphData` container
+    - _Requirements: 2.1_
+  - [x] 3.2 Implement graph building logic
+    - Extract nodes from specs, code files, and tests
+    - Build edges from SpecImpact relationships
+    - _Requirements: 2.1_
+  - [x] 3.3 Add graph API endpoint
+    - Create `/api/graph` endpoint returning ImpactGraphData
+    - Support filtering by node type
+    - _Requirements: 2.1, 2.5_
+  - [x] 3.4 Write property test for graph filtering
+    - **Property 6: Graph Filter Consistency**
+    - **Validates: Requirements 2.5**
+
+- [x] 4. Checkpoint - Ensure all tests pass
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [x] 5. Implement Demo Command
+  - [x] 5.1 Create demo command handler
+    - Add `specmem demo` CLI command
+    - Check for existing specs, create samples if needed
+    - _Requirements: 4.1_
+  - [x] 5.2 Implement dogfooding spec copy
+    - Copy SpecMem's own specs as demo data
+    - Preserve directory structure
+    - _Requirements: 4.5, 8.1_
+  - [x] 5.3 Implement auto-build and launch
+    - Run `specmem build` automatically
+    - Launch Web UI server
+    - Open browser to UI URL
+    - _Requirements: 4.2, 4.3_
+  - [x] 5.4 Add welcome toast and tips
+    - Display welcome message on demo start
+    - Show quick tips for navigation
+    - _Requirements: 4.4_
+
+- [x] 6. Implement Kiro Hooks Generator
+  - [x] 6.1 Create hook configuration models
+    - Define KiroHook dataclass
+    - Support file_save and manual triggers
+    - _Requirements: 5.1_
+  - [x] 6.2 Implement hook generation
+    - Generate validate-on-save hook
+    - Generate coverage-on-test-save hook
+    - Generate spec-reminder hook
+    - _Requirements: 5.2, 5.3, 5.4_
+  - [x] 6.3 Add --hooks flag to init command
+    - Extend `specmem init` with --hooks option
+    - Write hooks to `.kiro/hooks/` directory
+    - _Requirements: 5.1_
+
+- [x] 7. Implement Quick Actions API
+  - [x] 7.1 Create quick actions endpoints
+    - Add `/api/actions/scan` endpoint
+    - Add `/api/actions/build` endpoint
+    - Add `/api/actions/validate` endpoint
+    - Add `/api/actions/coverage` endpoint
+    - _Requirements: 7.1, 7.2_
+  - [x] 7.2 Implement action execution
+    - Execute CLI commands programmatically
+    - Capture output and return as JSON
+    - Handle errors gracefully
+    - _Requirements: 7.2, 7.4_
+
+- [x] 8. Checkpoint - Ensure all tests pass
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [x] 9. Implement Dashboard UI Enhancements
+  - [x] 9.1 Create hero section with animated stats
+    - Add counting animation for statistics
+    - Display total specs, coverage %, features count
+    - _Requirements: 1.1, 1.3_
+  - [x] 9.2 Add health score display
+    - Create circular progress indicator
+    - Show letter grade with color coding
+    - Add expandable breakdown section
+    - _Requirements: 1.2, 6.2, 6.4_
+  - [x] 9.3 Add activity feed
+    - Display recent spec changes via WebSocket refresh highlights
+    - Show timestamps and change types
+    - _Requirements: 1.4_
+  - [x] 9.4 Add onboarding wizard
+    - Show when no specs exist
+    - Provide quick-start options (Scan, Tour)
+    - _Requirements: 1.5_
+  - [x] 9.5 Add quick actions panel
+    - Create action buttons for Scan, Build, Query, Validate, Coverage
+    - Show results in modal
+    - Add success/error animations
+    - _Requirements: 7.1, 7.2, 7.3, 7.4_
+
+- [x] 10. Implement Impact Graph UI
+  - [x] 10.1 Add force-directed graph visualization
+    - Create SVG-based graph with circular layout
+    - Render nodes with type-based styling
+    - _Requirements: 2.1_
+  - [x] 10.2 Add node interactions
+    - Implement hover to highlight connected nodes
+    - Add hover tooltips with node labels
+    - _Requirements: 2.2, 2.3_
+  - [x] 10.3 Add entrance animations
+    - Smooth transitions for layout changes
+    - _Requirements: 2.4_
+  - [x] 10.4 Add type filtering
+    - Add filter buttons for spec/code/test
+    - Filter nodes by type
+    - _Requirements: 2.5_
+
+- [x] 11. Implement Live Sync UI
+  - [x] 11.1 Enhance WebSocket handling
+    - Handle spec update messages
+    - Trigger React Query invalidation
+    - _Requirements: 3.2_
+  - [x] 11.2 Add change highlight animations
+    - Highlight updated items briefly with ring animation
+    - Smooth fade-out after highlight
+    - _Requirements: 3.3_
+
+- [x] 12. Implement Tour Mode
+  - [x] 12.1 Create tour state management
+    - Define tour steps and targets
+    - Track current step and completion
+    - _Requirements: 10.1, 10.2_
+  - [x] 12.2 Implement tour overlay
+    - Highlight target elements
+    - Show step instructions
+    - Add next/skip buttons
+    - _Requirements: 10.1, 10.2_
+  - [x] 12.3 Implement step advancement
+    - Advance on next button click
+    - Show summary on tour end
+    - _Requirements: 10.3, 10.4_
+  - [x] 12.4 Write property test for tour advancement
+    - **Property 7: Tour Step Advancement**
+    - **Validates: Requirements 10.3**
+
+- [x] 13. Add UI Polish
+  - [x] 13.1 Add skeleton loaders
+    - Create skeleton components for loading states
+    - Replace blank screens with skeletons
+    - _Requirements: 9.2_
+  - [x] 13.2 Add view transitions
+    - Implement fade/slide transitions between views
+    - Smooth navigation animations
+    - _Requirements: 9.1_
+  - [x] 13.3 Add micro-animations
+    - Success checkmarks on action completion
+    - Modal scale-in animations
+    - _Requirements: 9.3, 9.4_
+  - [x] 13.4 Add dogfooding indicator
+    - Show "Eating our own dogfood" badge when viewing SpecMem's specs
+    - _Requirements: 8.4_
+
+- [x] 14. Final Checkpoint - Ensure all tests pass
+  - Ensure all tests pass, ask the user if questions arise.

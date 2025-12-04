@@ -53,9 +53,39 @@ issues = sm.validate()
     <a href="adapters/" class="md-button">Reference →</a>
   </div>
   <div class="feature-card">
+    <h3><span class="emoji">🔋</span> Power Adapter</h3>
+    <p>Parse Kiro Power configurations.</p>
+    <a href="power-adapter/" class="md-button">Reference →</a>
+  </div>
+  <div class="feature-card">
+    <h3><span class="emoji">🔌</span> MCP Server</h3>
+    <p>Model Context Protocol server for Kiro.</p>
+    <a href="mcp-server/" class="md-button">Reference →</a>
+  </div>
+  <div class="feature-card">
     <h3><span class="emoji">📊</span> Impact Graph</h3>
     <p>Relationship tracking and analysis.</p>
     <a href="impact-graph/" class="md-button">Reference →</a>
+  </div>
+  <div class="feature-card">
+    <h3><span class="emoji">💚</span> Health Score</h3>
+    <p>Project health scoring and improvement suggestions.</p>
+    <a href="health/" class="md-button">Reference →</a>
+  </div>
+  <div class="feature-card">
+    <h3><span class="emoji">📈</span> Coverage</h3>
+    <p>Spec coverage analysis and test suggestions.</p>
+    <a href="coverage/" class="md-button">Reference →</a>
+  </div>
+  <div class="feature-card">
+    <h3><span class="emoji">♻️</span> Lifecycle</h3>
+    <p>Spec health, pruning, generation, and compression.</p>
+    <a href="lifecycle/" class="md-button">Reference →</a>
+  </div>
+  <div class="feature-card">
+    <h3><span class="emoji">🔧</span> Kiro Config</h3>
+    <p>Index steering files, MCP servers, and hooks.</p>
+    <a href="kiro-config/" class="md-button">Reference →</a>
   </div>
 </div>
 

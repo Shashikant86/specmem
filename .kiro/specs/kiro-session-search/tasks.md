@@ -1,0 +1,176 @@
+# Implementation Plan
+
+- [x] 1. Create session data models and configuration
+  - [x] 1.1 Create session data models (Session, SessionMessage, SearchResult, SessionSpecLink)
+    - Add dataclasses to `specmem/sessions/models.py`
+    - Include all fields from design: session_id, title, workspace_directory, date_created_ms, messages, metadata
+    - _Requirements: 6.1, 6.2_
+  - [x] 1.2 Write property test for timestamp normalization
+    - **Property 15: Timestamp normalization correctness**
+    - **Validates: Requirements 6.4**
+  - [x] 1.3 Create SessionConfig and SessionConfigManager
+    - Add to `specmem/sessions/config.py`
+    - Implement load_config, save_config, is_configured methods
+    - Store config in `.specmem.toml` under `[sessions]` section
+    - _Requirements: 0.5, 0.8_
+  - [x] 1.4 Write property test for role normalization
+    - **Property 14: Role normalization correctness**
+    - **Validates: Requirements 6.2**
+
+- [x] 2. Implement session discovery with platform support
+  - [x] 2.1 Create SessionDiscovery class with platform detection
+    - Add to `specmem/sessions/discovery.py`
+    - Implement get_platform_paths() for macOS, Linux, Windows
+    - _Requirements: 0.1.1, 0.1.2, 0.1.3_
+  - [x] 2.2 Write property test for platform path correctness
+    - **Property 1: Platform path correctness**
+    - **Validates: Requirements 0.1.1, 0.1.2, 0.1.3**
+  - [x] 2.3 Implement directory validation
+    - Check directory exists and contains session JSON files
+    - _Requirements: 0.1.5, 0.8_
+  - [x] 2.4 Write property test for directory validation
+    - **Property 2: Directory validation correctness**
+    - **Validates: Requirements 0.1.5, 0.8**
+  - [x] 2.5 Implement discover() method with multi-path support
+    - Return all valid paths found for user selection
+    - _Requirements: 0.1.4, 0.3_
+
+- [x] 3. Checkpoint - Ensure all tests pass
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [x] 4. Implement session parser
+  - [x] 4.1 Create KiroSessionParser class
+    - Add to `specmem/sessions/parser.py`
+    - Implement parse_sessions_index() for sessions.json
+    - _Requirements: 1.3_
+  - [x] 4.2 Write property test for metadata extraction
+    - **Property 6: Session metadata extraction completeness**
+    - **Validates: Requirements 1.3**
+  - [x] 4.3 Implement parse_session_file() for individual sessions
+    - Parse history array with messages
+    - Preserve message order and roles
+    - _Requirements: 1.4, 3.1, 3.2_
+  - [x] 4.4 Write property test for message history completeness
+    - **Property 7: Message history completeness**
+    - **Validates: Requirements 1.4, 3.1, 3.2**
+  - [x] 4.5 Implement content flattening for arrays and tool calls
+    - Handle text content, tool_use items, and mixed arrays
+    - Include tool names in flattened output
+    - _Requirements: 3.3, 3.4, 6.3_
+  - [x] 4.6 Write property test for content flattening
+    - **Property 8: Content flattening produces readable text**
+    - **Validates: Requirements 3.3, 3.4, 6.3**
+
+- [x] 5. Implement session scanner with workspace path decoding
+  - [x] 5.1 Create SessionScanner class
+    - Add to `specmem/sessions/scanner.py`
+    - Implement scan() method to find all sessions
+    - _Requirements: 1.1, 1.2_
+  - [x] 5.2 Implement base64 workspace path encoding/decoding
+    - Decode directory names to workspace paths
+    - _Requirements: 1.2_
+  - [x] 5.3 Write property test for workspace path round-trip
+    - **Property 5: Base64 workspace path round-trip**
+    - **Validates: Requirements 1.2**
+  - [x] 5.4 Implement workspace filtering
+    - Filter sessions by workspace directory when specified
+    - _Requirements: 1.6, 2.5_
+  - [x] 5.5 Write property test for workspace filter correctness
+    - **Property 12: Workspace filter correctness**
+    - **Validates: Requirements 2.5, 7.2**
+
+- [x] 6. Checkpoint - Ensure all tests pass
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [x] 7. Implement session storage and indexing
+  - [x] 7.1 Create SQLite session storage
+    - Add to `specmem/sessions/storage.py`
+    - Create tables: sessions, session_messages, session_spec_links
+    - _Requirements: 1.3, 1.4_
+  - [x] 7.2 Create SessionIndexer for vector embeddings
+    - Add to `specmem/sessions/indexer.py`
+    - Index session messages for semantic search
+    - _Requirements: 2.1_
+  - [x] 7.3 Write property test for configured path restriction
+    - **Property 4: Configured path restriction**
+    - **Validates: Requirements 0.9, 1.1**
+
+- [x] 8. Implement session search engine
+  - [x] 8.1 Create SessionSearchEngine class
+    - Add to `specmem/sessions/search.py`
+    - Implement search() with semantic query matching
+    - _Requirements: 2.1_
+  - [x] 8.2 Implement search result ranking
+    - Order results by relevance score descending
+    - _Requirements: 2.3_
+  - [x] 8.3 Write property test for search result ordering
+    - **Property 10: Search results are ordered by relevance**
+    - **Validates: Requirements 2.3**
+  - [x] 8.4 Implement time filtering (since/until)
+    - Filter by dateCreated timestamp
+    - _Requirements: 2.4_
+  - [x] 8.5 Write property test for time filter correctness
+    - **Property 11: Time filter correctness**
+    - **Validates: Requirements 2.4**
+  - [x] 8.6 Implement search result metadata
+    - Include title, workspace, date in all results
+    - _Requirements: 2.2_
+  - [x] 8.7 Write property test for search result metadata
+    - **Property 9: Search results contain required metadata**
+    - **Validates: Requirements 2.2**
+  - [x] 8.8 Implement list_recent() and get_session() methods
+    - _Requirements: 3.1, 5.5_
+
+- [x] 9. Checkpoint - Ensure all tests pass
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [x] 10. Implement spec linker
+  - [x] 10.1 Create SpecLinker class
+    - Add to `specmem/sessions/linker.py`
+    - Detect spec file references in session content
+    - _Requirements: 4.1_
+  - [x] 10.2 Implement bidirectional linking
+    - Create links from sessions to specs and vice versa
+    - _Requirements: 4.2_
+  - [x] 10.3 Write property test for bidirectional linking
+    - **Property 13: Bidirectional spec linking**
+    - **Validates: Requirements 4.2, 4.3, 4.4**
+  - [x] 10.4 Implement get_sessions_for_spec() and get_specs_for_session()
+    - _Requirements: 4.3, 4.4_
+
+- [x] 11. Implement CLI commands
+  - [x] 11.1 Add `specmem sessions config` command
+    - Interactive mode with permission prompt
+    - Support --path for direct configuration
+    - Support --auto for non-interactive discovery
+    - _Requirements: 0.2, 0.4, 0.7, 5.1, 5.2, 5.3_
+  - [x] 11.2 Add `specmem sessions search` command
+    - Support query argument and --limit, --since, --robot flags
+    - _Requirements: 5.4, 5.7, 5.8_
+  - [x] 11.3 Add `specmem sessions list` command
+    - Support --workspace-only flag
+    - _Requirements: 5.5_
+  - [x] 11.4 Add `specmem sessions view` command
+    - Display full conversation by session ID
+    - Support --robot flag for JSON output
+    - _Requirements: 5.6, 5.7_
+  - [x] 11.5 Implement error handling for unconfigured state
+    - Show helpful error with configuration instructions
+    - _Requirements: 0.10, 5.9_
+  - [x] 11.6 Add help text with platform-specific paths
+    - Show example paths for macOS, Linux, Windows
+    - _Requirements: 0.11, 5.10, 5.11, 5.12_
+
+- [x] 12. Implement workspace-only mode
+  - [x] 12.1 Add workspace_only flag to SessionConfig
+    - Store in .specmem.toml
+    - _Requirements: 7.4_
+  - [x] 12.2 Implement workspace isolation in search
+    - Filter all results to current workspace when enabled
+    - _Requirements: 7.1, 7.2_
+  - [x] 12.3 Write property test for workspace-only isolation
+    - **Property 16: Workspace-only mode isolation**
+    - **Validates: Requirements 7.1, 7.3**
+
+- [x] 13. Final Checkpoint - Ensure all tests pass
+  - Ensure all tests pass, ask the user if questions arise.

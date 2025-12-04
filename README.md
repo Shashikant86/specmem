@@ -5,7 +5,7 @@
 <h1 align="center">SpecMem</h1>
 
 <p align="center">
-  <strong>🧠 Unified Agent Experience and Cognitive Memory for Every Coding Agent</strong>
+  <strong>🧠 Unified Agent Experience and Pragmatic Memory for Every Coding Agent</strong>
 </p>
 
 <p align="center">
@@ -20,7 +20,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/python-3.10+-blue.svg" alt="Python 3.10+" />
-  <img src="https://img.shields.io/badge/license-Apache%202.0-green.svg" alt="License" />
+  <img src="https://img.shields.io/badge/license-AGPL--3.0-blue.svg" alt="License" />
   <img src="https://img.shields.io/badge/status-alpha-orange.svg" alt="Status" />
 </p>
 
@@ -28,25 +28,47 @@
 
 ## 🎯 The Problem
 
-Modern coding agents (Kiro, SpecKit, Tessl, Claude Code, Cursor, etc.) can **generate files**, **follow tasks**, and **implement features** — but they struggle with:
+Modern coding agents (Kiro, SpecKit, Tessl, Claude Code, Cursor, etc.) can **generate files**, **follow tasks**, and **implement features**, but the industry faces critical challenges:
 
-| Problem | Impact |
-|---------|--------|
-| **🧠 Lack of persistent memory** | Agents forget specs and context when sessions reset |
-| **📋 Code changes without spec awareness** | Agents write or modify code without knowing specs, acceptance criteria, designs, or earlier decisions |
-| **⚡ Over-testing and wasted compute** | Every change triggers full test runs, even when only a tiny module changed |
-| **🔗 No spec impact understanding** | Agents can't automatically identify which specs or tests relate to code modifications |
-| **📉 Inconsistent agent performance** | No Agent Experience (AgentEx) layer — the equivalent of DevEx but for agents |
+### 📄 Markdown Madness & Verbosity
+
+Today's coding agents generate **mountains of markdown files**. Developers are drowning in `CLAUDE.md`, `AGENTS.md`, `.cursorrules`, `requirements.md`, `design.md`... **What happens to all these specs after features are built?** Nobody has figured out how to turn this chaos into better Agent Experience.
+
+### 🔒 Vendor Lock-In & Format Fragmentation
+
+Every coding agent uses **its own proprietary format**. Claude uses `CLAUDE.md`, Cursor uses `.cursorrules`, Kiro uses `.kiro/specs/`. This creates **massive IDE lock-in**. Switching agents means rewriting all your specs. Your project knowledge is trapped in one tool.
+
+### 🧠 Agents Have Amnesia
+
+Modern coding agents suffer from **catastrophic forgetting**. Sessions reset, context is lost, previous decisions vanish. Agents write code without knowing your specs, acceptance criteria, or earlier decisions.
+
+### ⚡ Wasted Compute & Slow CI
+
+Without understanding **what changed**, agents trigger full test runs for every tiny change, wasting compute and slowing CI pipelines.
+
+### 📉 No Agent Experience (AgentEx) Layer
+
+We have **DevEx** (Developer Experience) for humans. But where is **AgentEx** for AI coding agents? There's no unified memory layer, no context optimization, no impact analysis.
 
 > **These issues cause:** regressions, misaligned implementations, slow CI pipelines, unpredictable agent behavior, and increased costs.
 >
-> **The industry lacks a Cognitive Memory + AgentEx platform to fix this.**
+> **The industry lacks a Cognitive Memory + AgentEx platform to fix this. Until now.**
 
 ---
 
-## 💡 The Solution
+## 💡 The Solution: SpecMem
 
-**SpecMem** is a unified, embeddable memory layer for AI coding agents built on Spec-Driven Development (SDD) metadata.
+**SpecMem** is the **first-ever Agent Experience (AgentEx) platform**: a unified, embeddable memory layer for AI coding agents.
+
+### How SpecMem Solves Each Problem
+
+| Problem | SpecMem Solution |
+|---------|------------------|
+| **Markdown Madness** | Concise spec templates, auto TL;DRs, living documentation |
+| **Vendor Lock-In** | Agent-agnostic adapters: read ANY format, output to ANY agent |
+| **Agent Amnesia** | Persistent cognitive memory with semantic search |
+| **Wasted Compute** | SpecImpact selects only impacted specs/tests to execute |
+| **No AgentEx** | Complete Agent Experience layer with context optimization |
 
 
 ```bash
@@ -72,7 +94,10 @@ print(bundle.tldr)
 | **📊 SpecImpact Graph** | Bidirectional relationships between specs, code, and tests |
 | **⏱️ SpecDiff Timeline** | Track spec evolution, detect drift, find contradictions |
 | **✅ SpecValidator** | Quality assurance for specifications |
+| **📈 Spec Coverage** | Analyze gaps between acceptance criteria and tests |
 | **🎯 Selective Testing** | Run only the tests that matter |
+| **💚 Health Score** | Project health grades (A-F) with improvement suggestions |
+| **🌐 Web UI** | Interactive dashboard with live sync and impact graph |
 
 ---
 
@@ -114,13 +139,49 @@ Switch from **Kiro → SpecKit → Tessl → Claude Code → Cursor** without re
 
 ---
 
+## 🧠 Living Documentation & Memory
+
+SpecMem transforms your specifications into **living documentation** that:
+
+1. **Stays in sync** - File watcher detects changes and re-indexes automatically
+2. **Provides context** - AI agents query specs via MCP to understand your project
+3. **Tracks coverage** - See which acceptance criteria have tests
+4. **Shows relationships** - Impact graph connects specs ↔ code ↔ tests
+
+**How it acts as "memory" for agents:**
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  Agent asks: "What are the auth requirements?"                  │
+│                           │                                      │
+│                    ┌──────▼──────┐                               │
+│                    │   SpecMem   │  ← Semantic search            │
+│                    │   Memory    │                               │
+│                    └──────┬──────┘                               │
+│                           │                                      │
+│  Returns: Relevant specs, related code, suggested tests         │
+└─────────────────────────────────────────────────────────────────┘
+```
+
 ## 🚀 Quick Start
+
+### Try It Now (Demo)
+
+```bash
+# See SpecMem in action with its own specs
+specmem demo
+```
+
+This launches the Web UI with SpecMem's own specifications - dogfooding at its finest!
 
 ### CLI
 
 ```bash
 # Initialize SpecMem in your project
 specmem init
+
+# Initialize with Kiro hooks for automation
+specmem init --hooks
 
 # Scan and index your specifications
 specmem scan
@@ -133,6 +194,15 @@ specmem query "What are the authentication requirements?"
 
 # Analyze impact of code changes
 specmem impact --files src/auth/service.py
+
+# Check spec coverage
+specmem cov
+
+# Check project health score
+specmem health
+
+# Launch Web UI
+specmem serve
 ```
 
 ### Python API
@@ -155,6 +225,10 @@ impacted = sm.get_impacted_specs(["auth/service.py"])
 
 # Check for spec drift
 drift = sm.get_drift_report()
+
+# Analyze spec coverage
+coverage = sm.get_coverage()
+print(f"Coverage: {coverage.coverage_percentage:.1f}%")
 ```
 
 ---
@@ -171,6 +245,59 @@ SpecMem generates a `.specmem/` directory containing everything your agents need
 ├── impact_graph.json      # Code ↔ Spec relationships
 └── vectordb/              # Embedded vector storage
 ```
+
+---
+
+## ⚡ Built for Kiro
+
+SpecMem was built during **Kiroween 2025** with first-class Kiro support. Your `.kiro/specs/` become living, searchable agent memory.
+
+### ⚡ Kiro Powers Integration
+
+Install SpecMem as a **Kiro Power** for seamless IDE integration:
+
+- Query specs without leaving Kiro
+- Get context-aware suggestions in real-time
+- Analyze impact of changes instantly
+
+### 🔗 MCP Server
+
+Full **Model Context Protocol** support. Kiro's agent can query your specs, analyze impact, and get optimized context automatically.
+
+```json
+// Add to your mcp.json for instant Kiro integration
+{
+  "mcpServers": {
+    "specmem": {
+      "command": "uvx",
+      "args": ["specmem-mcp"]
+    }
+  }
+}
+```
+
+**Available MCP Tools:**
+
+| Tool | Description |
+|------|-------------|
+| `specmem_query` | Search specifications by natural language |
+| `specmem_impact` | Analyze change impact on specs and tests |
+| `specmem_context` | Get optimized context bundle for files |
+| `specmem_tldr` | Get TL;DR summary of key specs |
+| `specmem_coverage` | Analyze spec coverage and test gaps |
+| `specmem_validate` | Validate specifications for quality issues |
+
+### 📄 Native Kiro Adapter
+
+First-class support for `.kiro/specs/` structure:
+
+| File | What SpecMem Extracts |
+|------|----------------------|
+| `requirements.md` | User stories, acceptance criteria, constraints |
+| `design.md` | Architecture decisions, component interfaces |
+| `tasks.md` | Implementation checklist, progress tracking |
+
+See [Kiro Powers Documentation](https://superagenticai.github.io/specmem/user-guide/kiro-powers/) for details.
 
 ---
 
@@ -231,7 +358,9 @@ make lint
 
 ## 📄 License
 
-Apache 2.0 - see [LICENSE](LICENSE) for details.
+AGPL-3.0 - see [LICENSE](LICENSE) for details.
+
+For commercial licensing options, contact team@super-agentic.ai
 
 ---
 
@@ -240,5 +369,5 @@ Apache 2.0 - see [LICENSE](LICENSE) for details.
 **SpecMem** is developed by [Superagentic AI](https://super-agentic.ai) as part of the Kiroween Hackathon, December 2025.
 
 <p align="center">
-  <sub>Built with ❤️ for the AI coding agent community</sub>
+  <sub>Built for the AI coding agent community</sub>
 </p>

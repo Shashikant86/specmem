@@ -1,0 +1,179 @@
+# Implementation Plan
+
+- [x] 1. Set up MCP server infrastructure
+  - [x] 1.1 Create `specmem/mcp/` module structure
+    - Create `__init__.py`, `server.py`, `tools.py`, `handlers.py`
+    - Define base MCP server class with initialization
+    - _Requirements: 1.1, 1.6_
+  - [x] 1.2 Write property test for MCP tool exposure
+    - **Property 1: MCP Tool Exposure**
+    - **Validates: Requirements 1.1**
+  - [x] 1.3 Implement tool definitions in `tools.py`
+    - Define all 6 tools with input schemas
+    - Add tool metadata (name, description, schema)
+    - _Requirements: 1.1_
+
+- [x] 2. Implement MCP tool handlers
+  - [x] 2.1 Implement `specmem_query` handler
+    - Connect to SpecMemClient.query()
+    - Handle empty results gracefully
+    - _Requirements: 1.2, 4.2_
+  - [x] 2.2 Write property test for query relevance
+    - **Property 2: Query Relevance**
+    - **Validates: Requirements 1.2**
+  - [x] 2.3 Implement `specmem_impact` handler
+    - Connect to SpecMemClient.get_impact_set()
+    - Validate file paths exist
+    - _Requirements: 1.3, 4.4_
+  - [x] 2.4 Write property test for impact completeness
+    - **Property 3: Impact Completeness**
+    - **Validates: Requirements 1.3**
+  - [x] 2.5 Implement `specmem_context` handler
+    - Connect to SpecMemClient.get_context_for_change()
+    - Respect token budget
+    - _Requirements: 1.5_
+  - [x] 2.6 Write property test for token budget compliance
+    - **Property 4: Context Token Budget**
+    - **Validates: Requirements 1.5**
+  - [x] 2.7 Implement `specmem_tldr` handler
+    - Connect to SpecMemClient.get_tldr()
+    - Prioritize pinned specs
+    - _Requirements: 5.1, 5.2, 5.3_
+  - [x] 2.8 Write property test for TL;DR structure
+    - **Property 12: TL;DR Structure**
+    - **Validates: Requirements 5.1, 5.2, 5.3**
+  - [x] 2.9 Implement `specmem_coverage` handler
+    - Connect to SpecMemClient.get_coverage()
+    - _Requirements: 1.4_
+  - [x] 2.10 Implement `specmem_validate` handler
+    - Connect to SpecMemClient.validate()
+    - Return structured errors/warnings
+    - _Requirements: 6.1, 6.2, 6.3_
+  - [x] 2.11 Write property test for validation completeness
+    - **Property 13: Validation Completeness**
+    - **Validates: Requirements 6.1, 6.3**
+
+- [x] 3. Checkpoint - Ensure all MCP tests pass
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [x] 4. Implement Power Adapter
+  - [x] 4.1 Create `specmem/adapters/power.py` with base structure
+    - Implement PowerAdapter class extending SpecAdapter
+    - Implement detect() method for `.kiro/powers/` directory
+    - _Requirements: 2.1_
+  - [x] 4.2 Write property test for Power detection
+    - **Property 5: Power Detection**
+    - **Validates: Requirements 2.1**
+  - [x] 4.3 Implement POWER.md parsing
+    - Parse markdown structure into SpecBlocks
+    - Extract Power name, description, tool info
+    - Create SpecType.KNOWLEDGE blocks
+    - _Requirements: 2.2, 2.4_
+  - [x] 4.4 Implement steering file parsing
+    - Scan steering/ subdirectory
+    - Parse each .md file into SpecBlocks
+    - Create SpecType.TASK blocks for workflows
+    - _Requirements: 2.3_
+  - [x] 4.5 Write property test for Power parsing completeness
+    - **Property 6: Power Parsing Completeness**
+    - **Validates: Requirements 2.2, 2.3, 2.4**
+  - [x] 4.6 Implement mcp.json parsing
+    - Extract tool metadata from mcp.json
+    - Add tool info to SpecBlocks
+    - _Requirements: 2.4_
+  - [x] 4.7 Register PowerAdapter in adapter registry
+    - Add to `specmem/adapters/__init__.py`
+    - Add to registry in `specmem/adapters/registry.py`
+    - _Requirements: 2.1_
+  - [x] 4.8 Write property test for Power update consistency
+    - **Property 7: Power Update Consistency**
+    - **Validates: Requirements 2.5**
+
+- [x] 5. Checkpoint - Ensure all adapter tests pass
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [x] 6. Implement Power Graph Integration
+  - [x] 6.1 Add POWER node type to graph models
+    - Add `NodeType.POWER` enum value
+    - Update graph serialization/deserialization
+    - _Requirements: 3.1_
+  - [x] 6.2 Create `specmem/impact/power_builder.py`
+    - Implement PowerGraphBuilder class
+    - Implement build_power_nodes() method
+    - _Requirements: 3.1_
+  - [x] 6.3 Write property test for Power graph nodes
+    - **Property 8: Power Graph Nodes**
+    - **Validates: Requirements 3.1**
+  - [x] 6.4 Implement code pattern extraction from steering files
+    - Parse steering content for file patterns
+    - Support glob patterns (*.py, src/**/*.ts)
+    - _Requirements: 3.2_
+  - [x] 6.5 Implement Power-to-code edge creation
+    - Match patterns against workspace files
+    - Create edges with appropriate confidence
+    - _Requirements: 3.2_
+  - [x] 6.6 Write property test for Power-code edge creation
+    - **Property 9: Power-Code Edge Creation**
+    - **Validates: Requirements 3.2**
+  - [x] 6.7 Implement Power-to-spec edge creation
+    - Detect tool references in specs
+    - Create edges linking Powers to specs
+    - _Requirements: 3.3_
+  - [x] 6.8 Integrate PowerGraphBuilder into main GraphBuilder
+    - Call PowerGraphBuilder during graph build
+    - Merge Power nodes/edges into main graph
+    - _Requirements: 3.1, 3.2, 3.3_
+  - [x] 6.9 Write property test for Power impact query
+    - **Property 10: Power Impact Query**
+    - **Validates: Requirements 3.4**
+  - [x] 6.10 Implement Power removal handling
+    - Remove Power nodes when Power is uninstalled
+    - Clean up orphaned edges
+    - _Requirements: 3.5_
+
+- [x] 7. Checkpoint - Ensure all graph tests pass
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [x] 8. Implement error handling
+  - [x] 8.1 Add initialization check to all handlers
+    - Return helpful error if not initialized
+    - Include initialization instructions
+    - _Requirements: 4.1_
+  - [x] 8.2 Implement vector DB fallback
+    - Detect vector DB unavailability
+    - Fall back to keyword-based search
+    - Log warning about fallback
+    - _Requirements: 4.3_
+  - [x] 8.3 Implement invalid path detection
+    - Validate file paths before processing
+    - Return structured error with invalid paths
+    - _Requirements: 4.4_
+  - [x] 8.4 Write property test for invalid path error
+    - **Property 11: Invalid Path Error**
+    - **Validates: Requirements 4.4**
+  - [x] 8.5 Implement structured error responses
+    - Define error response schema
+    - Log errors with context
+    - _Requirements: 4.5_
+
+- [x] 9. Create SpecMem Power distribution package
+  - [x] 9.1 Create POWER.md documentation
+    - Write overview and description
+    - Document all tools with examples
+    - Add keywords for discovery
+    - _Requirements: 1.1_
+  - [x] 9.2 Create mcp.json configuration
+    - Define server command (uvx specmem-mcp)
+    - Set environment variables
+    - _Requirements: 1.1_
+  - [x] 9.3 Create steering files
+    - Write getting-started.md guide
+    - Write workflows.md for common tasks
+    - _Requirements: 1.1_
+  - [x] 9.4 Update pyproject.toml for MCP entry point
+    - Add specmem-mcp console script
+    - Add MCP dependencies
+    - _Requirements: 1.1_
+
+- [x] 10. Final Checkpoint - Ensure all tests pass
+  - Ensure all tests pass, ask the user if questions arise.

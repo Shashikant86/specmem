@@ -8,12 +8,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Spec Coverage Analysis** - Analyze gaps between acceptance criteria and tests
+  - `specmem cov` - Show overall coverage summary
+  - `specmem cov report` - Detailed coverage report per feature
+  - `specmem cov suggest` - Get test suggestions for uncovered criteria
+  - `specmem cov badge` - Generate coverage badge for README
+  - `specmem cov export` - Export coverage data (JSON/Markdown)
+- Coverage API methods in `SpecMemClient`:
+  - `get_coverage()` - Analyze spec coverage
+  - `get_coverage_suggestions()` - Get test suggestions
+  - `get_coverage_badge()` - Generate badge markdown
 - Documentation site with MkDocs Material theme
 - Comprehensive API reference
 - Advanced configuration guide
+- User guide for Spec Coverage
 
 ### Changed
 - Improved error messages in CLI
+- Updated CLI index with coverage command
 
 ### Fixed
 - Memory leak in large spec collections

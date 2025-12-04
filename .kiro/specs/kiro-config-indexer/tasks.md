@@ -1,0 +1,151 @@
+# Implementation Plan
+
+- [x] 1. Create core data models and steering parser
+  - [x] 1.1 Create kiro config module structure
+    - Create `specmem/kiro/` directory with `__init__.py`
+    - Create `models.py` with SteeringFile, MCPServerInfo, MCPToolInfo, HookInfo, KiroConfigSummary dataclasses
+    - _Requirements: 1.1, 2.1, 3.1_
+  - [x] 1.2 Implement SteeringParser class
+    - Create `steering.py` with SteeringParser class
+    - Implement YAML frontmatter extraction
+    - Implement `parse()` method for single file
+    - Implement `parse_directory()` for all steering files
+    - _Requirements: 1.1, 1.2_
+  - [x] 1.3 Implement file pattern matching
+    - Add `matches_file()` method to SteeringFile
+    - Use fnmatch/glob for pattern matching
+    - Handle edge cases (no pattern, invalid pattern)
+    - _Requirements: 1.3_
+  - [x] 1.4 Write property test for steering parsing completeness
+    - **Property 1: Steering File Parsing Completeness**
+    - **Validates: Requirements 1.1**
+  - [x] 1.5 Write property test for frontmatter round-trip
+    - **Property 2: Frontmatter Round-Trip**
+    - **Validates: Requirements 1.2**
+  - [x] 1.6 Write property test for file pattern matching
+    - **Property 3: File Pattern Matching Consistency**
+    - **Validates: Requirements 1.3, 5.1, 5.2**
+  - [x] 1.7 Write property test for inclusion mode priority
+    - **Property 4: Inclusion Mode Priority Mapping**
+    - **Validates: Requirements 1.4, 1.5**
+
+- [x] 2. Implement MCP config parser
+  - [x] 2.1 Create MCPConfigParser class
+    - Create `mcp.py` with MCPConfigParser class
+    - Implement `parse()` method for mcp.json
+    - Extract server configurations
+    - _Requirements: 2.1_
+  - [x] 2.2 Implement tool extraction
+    - Add `get_tools()` method
+    - Extract tool metadata from server configs
+    - Handle autoApprove lists
+    - _Requirements: 2.2, 2.5_
+  - [x] 2.3 Implement disabled server filtering
+    - Add filtering logic for disabled servers
+    - Add `get_enabled_servers()` method
+    - _Requirements: 2.3, 2.4_
+  - [x] 2.4 Write property test for MCP parsing completeness
+    - **Property 5: MCP Server Parsing Completeness**
+    - **Validates: Requirements 2.1**
+  - [x] 2.5 Write property test for tool extraction
+    - **Property 6: MCP Tool Extraction**
+    - **Validates: Requirements 2.2**
+  - [x] 2.6 Write property test for disabled server filtering
+    - **Property 7: Disabled Server Filtering**
+    - **Validates: Requirements 2.3, 2.4**
+
+- [x] 3. Checkpoint - Ensure all tests pass
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [x] 4. Implement hook parser
+  - [x] 4.1 Create HookParser class
+    - Create `hooks.py` with HookParser class
+    - Implement `parse()` method for single hook file
+    - Implement `parse_directory()` for all hooks
+    - _Requirements: 3.1_
+  - [x] 4.2 Implement hook filtering
+    - Add `matches_file()` method to HookInfo
+    - Add `get_hooks_for_trigger()` method
+    - _Requirements: 3.2, 3.3_
+  - [x] 4.3 Write property test for hook parsing completeness
+    - **Property 8: Hook Parsing Completeness**
+    - **Validates: Requirements 3.1**
+  - [x] 4.4 Write property test for hook trigger filtering
+    - **Property 9: Hook Trigger Filtering**
+    - **Validates: Requirements 3.2, 3.3**
+
+- [x] 5. Implement KiroConfigIndexer
+  - [x] 5.1 Create KiroConfigIndexer class
+    - Create `indexer.py` with KiroConfigIndexer class
+    - Implement `index_all()` method
+    - Implement `index_steering()`, `index_mcp_config()`, `index_hooks()` methods
+    - _Requirements: 1.1, 2.1, 3.1_
+  - [x] 5.2 Implement SpecBlock creation
+    - Create SpecBlocks from parsed config
+    - Set appropriate tags (steering, mcp, hook, config)
+    - Set priority based on inclusion mode
+    - _Requirements: 1.4, 1.5, 2.3, 3.4_
+  - [x] 5.3 Implement steering query methods
+    - Add `get_steering_for_file()` method
+    - Include always-included steering
+    - Filter by file pattern matching
+    - _Requirements: 5.1, 5.2, 5.3_
+  - [x] 5.4 Write property test for always-included steering
+    - **Property 10: Always-Included Steering**
+    - **Validates: Requirements 5.3**
+
+- [x] 6. Checkpoint - Ensure all tests pass
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [x] 7. Integrate with context bundles
+  - [x] 7.1 Update context bundle generation
+    - Modify `get_context_for_change()` to include steering
+    - Add steering content for matching files
+    - _Requirements: 6.1, 6.2_
+  - [x] 7.2 Add hook mentions to context
+    - Include triggered hooks in context bundle
+    - Add hook information for file_save triggers
+    - _Requirements: 6.4_
+  - [x] 7.3 Write property test for context bundle steering
+    - **Property 11: Context Bundle Steering Inclusion**
+    - **Validates: Requirements 6.1, 6.2**
+  - [x] 7.4 Write property test for context bundle hooks
+    - **Property 12: Context Bundle Hook Mention**
+    - **Validates: Requirements 6.4**
+
+- [x] 8. Implement CLI commands
+  - [x] 8.1 Add `specmem kiro-config` command
+    - Display summary of all Kiro configuration
+    - Group by type (steering, mcp, hooks)
+    - Handle missing config gracefully
+    - _Requirements: 4.1, 4.2, 4.3_
+  - [x] 8.2 Add `specmem steering` command
+    - Add `--file` flag for file-specific queries
+    - Display applicable steering files
+    - Show inclusion mode and patterns
+    - _Requirements: 5.1, 5.4_
+
+- [x] 9. Integrate with Kiro adapter
+  - [x] 9.1 Update KiroAdapter to use KiroConfigIndexer
+    - Call indexer during `load()` method
+    - Merge config SpecBlocks with spec SpecBlocks
+    - _Requirements: 1.1, 2.1, 3.1_
+  - [x] 9.2 Add file watcher support
+    - Watch `.kiro/steering/`, `.kiro/settings/`, `.kiro/hooks/`
+    - Trigger re-indexing on changes
+    - _Requirements: 4.4_
+
+- [x] 10. Add documentation
+  - [x] 10.1 Create user guide documentation
+    - Add `docs/user-guide/kiro-config.md`
+    - Document steering file format
+    - Document MCP config indexing
+    - Document hook indexing
+    - _Requirements: All_
+  - [x] 10.2 Update CLI documentation
+    - Add `docs/cli/kiro-config.md`
+    - Add `docs/cli/steering.md`
+    - _Requirements: 4.1, 5.1_
+
+- [x] 11. Final Checkpoint - Ensure all tests pass
+  - Ensure all tests pass, ask the user if questions arise.

@@ -88,6 +88,7 @@ class WebServer:
         vector_store=None,
         pack_builder=None,
         workspace_path: Path = Path(),
+        enable_file_watcher: bool = True,
     ):
         """Initialize the web server.
 
@@ -97,6 +98,7 @@ class WebServer:
             vector_store: Optional vector store for semantic search
             pack_builder: Optional pack builder for export
             workspace_path: Path to the workspace root
+            enable_file_watcher: Enable live file watching
         """
         self.blocks = blocks
         self.port = port
@@ -105,6 +107,9 @@ class WebServer:
         self.workspace_path = workspace_path
         self.connection_manager = ConnectionManager()
         self._shutdown_event = asyncio.Event()
+        self._file_watcher = None
+        self._enable_file_watcher = enable_file_watcher
+        self._background_tasks: set[asyncio.Task] = set()
 
         # Create FastAPI app
         self.app = FastAPI(
@@ -116,6 +121,9 @@ class WebServer:
         self._setup_middleware()
         self._setup_routes()
         self._setup_static_files()
+
+        if enable_file_watcher:
+            self._setup_file_watcher()
 
     def _setup_middleware(self):
         """Configure CORS and other middleware."""
@@ -357,14 +365,23 @@ class WebServer:
         console.print(f"[blue]   Local:   http://127.0.0.1:{self.port}[/blue]")
         console.print(f"[blue]   API:     http://127.0.0.1:{self.port}/api[/blue]")
         console.print(f"[blue]   Docs:    http://127.0.0.1:{self.port}/docs[/blue]")
+
+        # Start file watcher
+        if self._file_watcher:
+            self.start_file_watcher()
+            console.print("[green]   Live:    File watcher enabled[/green]")
+
         console.print("\n[dim]Press Ctrl+C to stop[/dim]\n")
 
-        uvicorn.run(
-            self.app,
-            host="127.0.0.1",
-            port=self.port,
-            log_level="warning",
-        )
+        try:
+            uvicorn.run(
+                self.app,
+                host="127.0.0.1",
+                port=self.port,
+                log_level="warning",
+            )
+        finally:
+            self.stop_file_watcher()
 
     async def start_async(self):
         """Start the web server asynchronously."""
@@ -382,3 +399,71 @@ class WebServer:
     def stop(self):
         """Signal the server to stop."""
         self._shutdown_event.set()
+        if self._file_watcher:
+            self._file_watcher.stop()
+
+    def _setup_file_watcher(self):
+        """Set up file watcher for live spec updates."""
+        try:
+            from specmem.watcher.service import FileChangeEvent, SpecFileWatcher
+
+            def on_file_change(events: list[FileChangeEvent]):
+                """Handle file changes by re-indexing and notifying clients."""
+                logger.info(f"Spec files changed: {[str(e.path) for e in events]}")
+
+                # Re-scan specs
+                try:
+                    from specmem.adapters.kiro import KiroAdapter
+
+                    adapter = KiroAdapter()
+                    if adapter.detect(self.workspace_path):
+                        new_blocks = adapter.load(self.workspace_path)
+                        self.update_blocks(new_blocks)
+
+                        # Notify clients via WebSocket
+                        task = asyncio.create_task(self._notify_spec_update(events))
+                        # Store reference to prevent garbage collection
+                        self._background_tasks.add(task)
+                        task.add_done_callback(self._background_tasks.discard)
+                except Exception as e:
+                    logger.error(f"Failed to re-index specs: {e}")
+
+            self._file_watcher = SpecFileWatcher(
+                workspace_path=self.workspace_path,
+                callback=on_file_change,
+                debounce_ms=500,
+            )
+            logger.info("File watcher configured")
+        except ImportError:
+            logger.warning("watchdog not installed, file watching disabled")
+        except Exception as e:
+            logger.warning(f"Failed to set up file watcher: {e}")
+
+    async def _notify_spec_update(self, events: list):
+        """Notify clients about spec updates."""
+        from specmem.watcher.service import FileChangeEvent
+
+        await self.connection_manager.broadcast(
+            {
+                "type": "spec_update",
+                "message": "Specifications updated",
+                "files": [
+                    {
+                        "path": str(e.path),
+                        "event_type": e.event_type,
+                    }
+                    for e in events
+                    if isinstance(e, FileChangeEvent)
+                ],
+            }
+        )
+
+    def start_file_watcher(self):
+        """Start the file watcher."""
+        if self._file_watcher:
+            self._file_watcher.start()
+
+    def stop_file_watcher(self):
+        """Stop the file watcher."""
+        if self._file_watcher:
+            self._file_watcher.stop()

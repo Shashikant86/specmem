@@ -11,7 +11,7 @@ name = "specmem"
 version = "0.1.0"
 description = "Unified, embeddable memory layer for AI coding agents built on Spec-Driven Development metadata"
 readme = "README.md"
-license = "Apache-2.0"
+license = "AGPL-3.0-or-later"
 requires-python = ">=3.11"
 keywords = [
     "ai",
@@ -40,7 +40,7 @@ classifiers = [
     "Environment :: Console",
     "Framework :: Pytest",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: Apache Software License",
+    "License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.11",
@@ -124,6 +124,7 @@ all = [
 
 [project.scripts]
 specmem = "specmem.cli.main:cli"
+specmem-mcp = "specmem.mcp.server:main"
 
 [project.urls]
 Homepage = "https://github.com/SuperagenticAI/specmem"

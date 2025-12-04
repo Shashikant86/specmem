@@ -5,96 +5,92 @@ Start the SpecMem web UI server.
 ## Usage
 
 ```bash
-specmem serve [OPTIONS]
+specmem serve [PATH] [OPTIONS]
 ```
 
 ## Description
 
 Launches an interactive web interface for exploring and managing specifications.
 
+**Prerequisites:** Run `specmem build` first to index your specifications.
+
 ## Options
 
 | Option | Description | Default |
 |--------|-------------|---------|
-| `--host HOST` | Server host | `127.0.0.1` |
-| `--port, -p PORT` | Server port | `8000` |
-| `--reload` | Enable hot reload | `true` |
-| `--no-reload` | Disable hot reload | `false` |
-| `--open` | Open browser automatically | `false` |
-| `--production` | Production mode | `false` |
+| `PATH` | Repository path | `.` (current directory) |
+| `--port, -p PORT` | Server port | `8765` |
 
 ## Examples
 
 ### Basic Start
 
 ```bash
+# Build first (required for search)
+specmem build
+
+# Start the server
 specmem serve
 ```
 
 Output:
 
 ```
-🌐 SpecMem Web UI
+🚀 SpecMem UI starting...
+   Local:   http://127.0.0.1:8765
+   API:     http://127.0.0.1:8765/api
+   Docs:    http://127.0.0.1:8765/docs
+   Live:    File watcher enabled
 
-Server running at: http://127.0.0.1:8000
 Press Ctrl+C to stop
-
-Features:
-  • Dashboard: http://127.0.0.1:8000/
-  • Search: http://127.0.0.1:8000/search
-  • Graph: http://127.0.0.1:8000/graph
-  • Timeline: http://127.0.0.1:8000/timeline
-  • Validator: http://127.0.0.1:8000/validate
-  • API Docs: http://127.0.0.1:8000/docs
 ```
 
-### Custom Host and Port
+### Custom Port
 
 ```bash
-specmem serve --host 0.0.0.0 --port 3000
+specmem serve --port 3000
 ```
 
-### Open Browser
+### Specific Project Path
 
 ```bash
-specmem serve --open
+specmem serve /path/to/project
 ```
 
-### Production Mode
+## Features
 
-```bash
-specmem serve --production --no-reload
-```
+The Web UI provides:
 
-### Docker
-
-```bash
-docker run -p 8000:8000 -v $(pwd):/workspace ghcr.io/shashikant86/specmem:latest serve --host 0.0.0.0
-```
+- **Dashboard** - Health score, stats, quick actions
+- **Specifications** - Browse and filter all indexed specs
+- **Search** - Semantic search across your specs
+- **Coverage** - See which acceptance criteria have tests
+- **Impact Graph** - Visualize spec ↔ code ↔ test relationships
+- **Sessions** - Browse Kiro conversation history
+- **Powers** - View installed Kiro Powers
 
 ## API Endpoints
 
-The server exposes a REST API:
+The server exposes a REST API at `/api`:
 
 | Endpoint | Method | Description |
 |----------|--------|-------------|
-| `/api/specs` | GET | List all specs |
-| `/api/specs/{id}` | GET | Get specific spec |
-| `/api/specs/search` | GET | Search specs |
-| `/api/impact` | POST | Analyze impact |
-| `/api/validate` | POST | Validate specs |
+| `/api/blocks` | GET | List all spec blocks |
+| `/api/blocks/{id}` | GET | Get specific block |
+| `/api/search` | GET | Search specs |
+| `/api/stats` | GET | Get statistics |
+| `/api/health` | GET | Get health score |
+| `/api/coverage` | GET | Get coverage analysis |
 | `/api/graph` | GET | Get impact graph |
+| `/api/actions/*` | POST | Quick actions |
 
 ## WebSocket
 
-Real-time updates at `ws://localhost:8000/ws`
+Real-time updates at `ws://localhost:8765/api/ws`
 
-## Requirements
-
-```bash
-pip install "specmem[ui]"
-```
+The server watches for spec file changes and broadcasts updates to connected clients.
 
 ## See Also
 
-- [Web UI Guide](../user-guide/web-ui.md)
+- [specmem demo](demo.md) - Try SpecMem with sample data
+- [Web UI Guide](../user-guide/web-ui.md) - Full UI documentation

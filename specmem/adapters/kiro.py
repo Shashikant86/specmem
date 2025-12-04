@@ -48,33 +48,54 @@ class KiroAdapter(SpecAdapter):
         return False
 
     def load(self, repo_path: str) -> list[SpecBlock]:
-        """Load and parse all Kiro spec files."""
+        """Load and parse all Kiro spec files and configuration."""
         blocks: list[SpecBlock] = []
         kiro_dir = Path(repo_path) / ".kiro"
         specs_dir = kiro_dir / "specs"
 
-        if not specs_dir.exists():
-            return blocks
+        # Load spec files
+        if specs_dir.exists():
+            for spec_folder in specs_dir.iterdir():
+                if not spec_folder.is_dir():
+                    continue
 
-        for spec_folder in specs_dir.iterdir():
-            if not spec_folder.is_dir():
-                continue
+                # Parse each spec file type
+                requirements_file = spec_folder / "requirements.md"
+                if requirements_file.exists():
+                    blocks.extend(self._parse_requirements(requirements_file))
 
-            # Parse each spec file type
-            requirements_file = spec_folder / "requirements.md"
-            if requirements_file.exists():
-                blocks.extend(self._parse_requirements(requirements_file))
+                design_file = spec_folder / "design.md"
+                if design_file.exists():
+                    blocks.extend(self._parse_design(design_file))
 
-            design_file = spec_folder / "design.md"
-            if design_file.exists():
-                blocks.extend(self._parse_design(design_file))
+                tasks_file = spec_folder / "tasks.md"
+                if tasks_file.exists():
+                    blocks.extend(self._parse_tasks(tasks_file))
 
-            tasks_file = spec_folder / "tasks.md"
-            if tasks_file.exists():
-                blocks.extend(self._parse_tasks(tasks_file))
+        # Load Kiro configuration (steering, MCP, hooks)
+        config_blocks = self._load_kiro_config(Path(repo_path))
+        blocks.extend(config_blocks)
 
-        logger.info(f"Loaded {len(blocks)} SpecBlocks from Kiro specs")
+        logger.info(f"Loaded {len(blocks)} SpecBlocks from Kiro specs and config")
         return blocks
+
+    def _load_kiro_config(self, repo_path: Path) -> list[SpecBlock]:
+        """Load Kiro configuration artifacts.
+
+        Args:
+            repo_path: Repository root path
+
+        Returns:
+            List of SpecBlocks from steering, MCP, and hooks
+        """
+        try:
+            from specmem.kiro.indexer import KiroConfigIndexer
+
+            indexer = KiroConfigIndexer(repo_path)
+            return indexer.index_all()
+        except Exception as e:
+            logger.warning(f"Failed to load Kiro config: {e}")
+            return []
 
     def _parse_requirements(self, file_path: Path) -> list[SpecBlock]:
         """Parse requirements.md file."""

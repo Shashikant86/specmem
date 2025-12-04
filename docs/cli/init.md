@@ -23,6 +23,7 @@ Creates the necessary configuration files and directories for SpecMem:
 | `--minimal` | Create minimal config | `false` |
 | `--embedding PROVIDER` | Embedding provider | `local` |
 | `--vectordb BACKEND` | Vector database backend | `lancedb` |
+| `--hooks` | Generate Kiro hooks for automation | `false` |
 
 ## Examples
 
@@ -71,6 +72,18 @@ backend = "lancedb"
 ```bash
 specmem init --force
 ```
+
+### With Kiro Hooks
+
+```bash
+specmem init --hooks
+```
+
+This generates Kiro hook configurations in `.kiro/hooks/`:
+
+- **specmem-validate-on-save** - Validates specs when you save a `.md` file
+- **specmem-coverage-on-test** - Updates coverage when you save a test file
+- **specmem-spec-reminder** - Reminds the agent about relevant specs when coding
 
 ## Generated Files
 

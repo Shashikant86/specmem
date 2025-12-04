@@ -200,17 +200,21 @@ class SpecMemAgent:
 
 ## MCP Server (Model Context Protocol)
 
+SpecMem provides a full MCP server for integration with Kiro and other MCP-compatible tools.
+
 ### Configuration
 
-Add to your MCP config:
+Add to `.kiro/settings/mcp.json`:
 
 ```json
 {
   "mcpServers": {
     "specmem": {
-      "command": "specmem",
-      "args": ["mcp-serve"],
-      "env": {}
+      "command": "uvx",
+      "args": ["specmem-mcp"],
+      "env": {
+        "SPECMEM_LOG_LEVEL": "INFO"
+      }
     }
   }
 }
@@ -220,10 +224,12 @@ Add to your MCP config:
 
 | Tool | Description |
 |------|-------------|
-| `specmem_query` | Search specifications |
-| `specmem_impact` | Analyze change impact |
-| `specmem_validate` | Validate specifications |
-| `specmem_context` | Get context for files |
+| `specmem_query` | Search specifications by natural language |
+| `specmem_impact` | Analyze change impact on specs and tests |
+| `specmem_context` | Get optimized context bundle for files |
+| `specmem_tldr` | Get TL;DR summary of key specs |
+| `specmem_coverage` | Analyze spec coverage and test gaps |
+| `specmem_validate` | Validate specifications for quality issues |
 
 ### Usage in Agent
 
@@ -236,6 +242,20 @@ SpecMem Response:
 - auth/requirements.md: JWT-based authentication with refresh tokens
 - security/constraints.md: All endpoints require authentication
 ```
+
+### Workflow Example
+
+```
+# Before making changes
+specmem_impact(files: ["src/auth/service.py"])
+specmem_context(files: ["src/auth/service.py"], token_budget: 4000)
+
+# After changes
+specmem_validate()
+specmem_coverage(feature: "authentication")
+```
+
+For detailed MCP server documentation, see [MCP Server API](../api/mcp-server.md).
 
 ## Kiro Integration
 

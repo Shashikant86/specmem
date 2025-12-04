@@ -5,14 +5,28 @@ SpecMem includes an interactive web interface for exploring and managing specifi
 ## Quick Start
 
 ```bash
-# Install UI dependencies
-pip install "specmem[ui]"
+# 1. Build your specs first
+specmem build
 
-# Start the server
+# 2. Start the server
 specmem serve
 ```
 
-Open [http://localhost:8000](http://localhost:8000) in your browser.
+Open [http://localhost:8765](http://localhost:8765) in your browser.
+
+## Demo Mode
+
+For a quick demo with SpecMem's own specs (dogfooding):
+
+```bash
+specmem demo
+```
+
+This will:
+1. Copy SpecMem's own specs as sample data
+2. Build the Agent Experience Pack
+3. Launch the Web UI
+4. Open your browser automatically
 
 ## Features
 
@@ -63,101 +77,136 @@ Run and view validation results:
 
 ## Configuration
 
-```toml
-[ui]
-# Server host
-host = "127.0.0.1"
+The Web UI uses the default port 8765. You can customize this:
 
-# Server port
-port = 8000
-
-# Enable hot reload (development)
-reload = true
-
-# Enable authentication
-auth_enabled = false
-
-# API key (if auth enabled)
-# api_key = "your-secret-key"
+```bash
+# Custom port
+specmem serve --port 3000
 ```
 
 ## CLI Options
 
 ```bash
-# Custom host and port
-specmem serve --host 0.0.0.0 --port 3000
+# Custom port
+specmem serve --port 3000
 
-# Disable hot reload
-specmem serve --no-reload
-
-# Open browser automatically
-specmem serve --open
-
-# Production mode
-specmem serve --production
+# Specify workspace path
+specmem serve /path/to/project
 ```
 
 ## API Endpoints
 
-The web UI exposes a REST API:
+The web UI exposes a REST API at `/api`:
 
-### Specs
+### Blocks (Specs)
 
 ```bash
-# List all specs
-GET /api/specs
+# List all blocks
+GET /api/blocks
 
-# Get specific spec
-GET /api/specs/{id}
+# Get specific block
+GET /api/blocks/{id}
 
-# Search specs
-GET /api/specs/search?q=authentication
+# Search blocks
+GET /api/search?q=authentication&limit=10
 
-# Get spec history
-GET /api/specs/{id}/history
+# Get pinned blocks
+GET /api/pinned
+
+# Get statistics
+GET /api/stats
 ```
 
-### Impact
+### Coverage
 
 ```bash
-# Analyze impact
-POST /api/impact
-{
-  "files": ["src/auth/service.py"]
-}
+# Get coverage analysis
+GET /api/coverage
 
+# Get test suggestions
+GET /api/coverage/suggestions
+```
+
+### Health Score
+
+```bash
+# Get project health score
+GET /api/health
+```
+
+### Impact Graph
+
+```bash
 # Get graph data
 GET /api/graph
+
+# Filter by node type
+GET /api/graph?types=spec,code
 ```
 
-### Validation
+### Quick Actions
 
 ```bash
-# Validate all specs
-POST /api/validate
+# Scan workspace
+POST /api/actions/scan
 
-# Validate specific spec
-POST /api/validate/{id}
+# Build Agent Pack
+POST /api/actions/build
+
+# Validate specs
+POST /api/actions/validate
+
+# Run coverage analysis
+POST /api/actions/coverage
+
+# Query specs
+POST /api/actions/query?q=authentication
+```
+
+### Sessions (Kiro)
+
+```bash
+# List sessions
+GET /api/sessions
+
+# Search sessions
+GET /api/sessions/search?q=query
+
+# Get session details
+GET /api/sessions/{session_id}
+```
+
+### Powers (Kiro)
+
+```bash
+# List installed powers
+GET /api/powers
+
+# Get power details
+GET /api/powers/{power_name}
 ```
 
 ## WebSocket
 
-Real-time updates via WebSocket:
+Real-time updates via WebSocket at `/api/ws`:
 
 ```javascript
-const ws = new WebSocket('ws://localhost:8000/ws');
+const ws = new WebSocket('ws://localhost:8765/api/ws');
 
 ws.onmessage = (event) => {
   const data = JSON.parse(event.data);
-  console.log('Update:', data);
+
+  if (data.type === 'spec_update') {
+    console.log('Specs updated:', data.files);
+    // Refresh your data
+  }
 };
 
-// Subscribe to spec changes
-ws.send(JSON.stringify({
-  type: 'subscribe',
-  channel: 'specs'
-}));
+// Keepalive
+ws.send('ping');
 ```
+
+The server automatically watches for spec file changes and broadcasts updates to all connected clients.
 
 ## Embedding
 
@@ -184,17 +233,8 @@ docker run -p 8000:8000 -v $(pwd):/workspace ghcr.io/shashikant86/specmem:latest
 
 ## Screenshots
 
-### Dashboard
-![Dashboard](../assets/ui-dashboard.png)
-
-### Search
-![Search](../assets/ui-search.png)
-
-### Impact Graph
-![Impact Graph](../assets/ui-graph.png)
-
-### Timeline
-![Timeline](../assets/ui-timeline.png)
+!!! note "Screenshots Coming Soon"
+    Visual screenshots of the Web UI will be added in a future update.
 
 ## Keyboard Shortcuts
 

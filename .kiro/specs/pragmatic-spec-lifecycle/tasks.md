@@ -1,0 +1,132 @@
+# Implementation Plan
+
+- [x] 1. Create core data models and health analyzer
+  - [x] 1.1 Create lifecycle module structure
+    - Create `specmem/lifecycle/` directory with `__init__.py`
+    - Create `models.py` with SpecHealthScore, PruneResult, GeneratedSpec, CompressedSpec dataclasses
+    - _Requirements: 1.2, 2.2, 3.4, 4.1_
+  - [x] 1.2 Implement HealthAnalyzer class
+    - Create `health.py` with HealthAnalyzer class
+    - Implement health score calculation algorithm
+    - Implement `analyze_spec()`, `analyze_all()`, `get_orphaned_specs()`, `get_stale_specs()` methods
+    - _Requirements: 1.1, 1.2, 1.4_
+  - [x] 1.3 Write property test for health score bounds
+    - **Property 1: Health Score Bounds**
+    - **Validates: Requirements 1.2**
+  - [x] 1.4 Write property test for orphan detection consistency
+    - **Property 2: Orphan Detection Consistency**
+    - **Validates: Requirements 1.1, 1.4**
+
+- [x] 2. Implement Pruner Engine
+  - [x] 2.1 Create PrunerEngine class
+    - Create `pruner.py` with PrunerEngine class
+    - Implement `analyze()` method to identify prunable specs
+    - Implement archive directory management
+    - _Requirements: 2.1, 2.2_
+  - [x] 2.2 Implement prune operations
+    - Implement `prune_orphaned()` with archive/delete modes
+    - Implement `prune_by_name()` for explicit spec targeting
+    - Implement `prune_stale()` for time-based pruning
+    - Implement dry-run support
+    - _Requirements: 2.1, 2.3, 2.4, 2.5, 2.6, 2.7_
+  - [x] 2.3 Implement archive metadata and restoration
+    - Create ArchiveMetadata model
+    - Implement metadata storage in archived specs
+    - Update vector index after pruning
+    - _Requirements: 2.2, 2.4_
+  - [x] 2.4 Write property test for archive preservation
+    - **Property 3: Archive Preservation**
+    - **Validates: Requirements 2.2**
+  - [x] 2.5 Write property test for prune index consistency
+    - **Property 4: Prune Index Consistency**
+    - **Validates: Requirements 2.4**
+  - [x] 2.6 Write property test for dry run immutability
+    - **Property 5: Dry Run Immutability**
+    - **Validates: Requirements 2.5**
+  - [x] 2.7 Write property test for explicit prune targeting
+    - **Property 6: Explicit Prune Targeting**
+    - **Validates: Requirements 2.6, 2.7**
+
+- [x] 3. Checkpoint - Ensure all tests pass
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [x] 4. Implement Generator Engine
+  - [x] 4.1 Create GeneratorEngine class
+    - Create `generator.py` with GeneratorEngine class
+    - Implement code file analysis (extract functions, docstrings, comments)
+    - _Requirements: 3.1, 3.2_
+  - [x] 4.2 Implement spec generation
+    - Implement `generate_from_file()` method
+    - Implement `generate_from_directory()` with grouping options
+    - Add auto-generated metadata marker
+    - Support multiple adapter formats (Kiro, SpecKit, etc.)
+    - _Requirements: 3.1, 3.3, 3.4, 3.5_
+  - [x] 4.3 Write property test for generated spec validity
+    - **Property 7: Generated Spec Validity**
+    - **Validates: Requirements 3.1, 3.3, 3.4**
+
+- [x] 5. Implement Compressor Engine
+  - [x] 5.1 Create CompressorEngine class
+    - Create `compressor.py` with CompressorEngine class
+    - Implement spec content analysis
+    - _Requirements: 4.1_
+  - [x] 5.2 Implement compression logic
+    - Implement `compress_spec()` method
+    - Implement `compress_all()` with threshold
+    - Preserve acceptance criteria during compression
+    - Store both original and compressed versions
+    - _Requirements: 4.1, 4.2, 4.3, 4.5_
+  - [x] 5.3 Write property test for compression preserves criteria
+    - **Property 8: Compression Preserves Criteria**
+    - **Validates: Requirements 4.1, 4.2**
+  - [x] 5.4 Write property test for compression storage
+    - **Property 9: Compression Storage**
+    - **Validates: Requirements 4.3**
+  - [x] 5.5 Write property test for verbose flagging consistency
+    - **Property 10: Verbose Flagging Consistency**
+    - **Validates: Requirements 4.5**
+
+- [x] 6. Checkpoint - Ensure all tests pass
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [x] 7. Implement CLI commands
+  - [x] 7.1 Add `specmem prune` command
+    - Add prune subcommand to CLI
+    - Support --mode (archive/delete), --dry-run, --force flags
+    - Support explicit spec names as arguments
+    - _Requirements: 5.1, 2.6_
+  - [x] 7.2 Add `specmem generate` command
+    - Add generate subcommand to CLI
+    - Support --format, --output, --group-by flags
+    - _Requirements: 5.2_
+  - [x] 7.3 Add `specmem compress` command
+    - Add compress subcommand to CLI
+    - Support --threshold flag
+    - _Requirements: 5.3_
+  - [x] 7.4 Add `specmem health` command
+    - Add health subcommand to CLI
+    - Display spec health scores and recommendations
+    - _Requirements: 5.4_
+
+- [x] 8. Implement Python API integration
+  - [x] 8.1 Add lifecycle methods to SpecMemClient
+    - Add `prune_specs()` method
+    - Add `generate_specs()` method
+    - Add `compress_specs()` method
+    - Add `get_spec_health()` method
+    - _Requirements: 6.1, 6.2, 6.3_
+
+- [x] 9. Add documentation
+  - [x] 9.1 Create CLI documentation
+    - Add `docs/cli/prune.md`
+    - Add `docs/cli/generate.md`
+    - Add `docs/cli/compress.md`
+    - Add `docs/cli/health.md`
+    - _Requirements: 5.1, 5.2, 5.3, 5.4_
+  - [x] 9.2 Update user guide
+    - Add spec lifecycle section to user guide
+    - Document pragmatic SDD workflow
+    - _Requirements: All_
+
+- [x] 10. Final Checkpoint - Ensure all tests pass
+  - Ensure all tests pass, ask the user if questions arise.

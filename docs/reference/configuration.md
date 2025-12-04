@@ -227,6 +227,39 @@ retention_days = 365
 auto_snapshot = true
 ```
 
+## Coverage
+
+```toml
+[coverage]
+# Minimum confidence threshold for "covered" status
+# Range: 0.0 to 1.0
+confidence_threshold = 0.5
+
+# Test file patterns to scan
+test_patterns = [
+    "test_*.py",
+    "*_test.py",
+    "*.test.ts",
+    "*.test.js",
+    "*.spec.ts",
+    "*.spec.js",
+]
+
+# Directories to scan for tests
+test_dirs = ["tests", "test", "spec", "__tests__"]
+
+# Exclude patterns
+exclude_patterns = ["node_modules", ".venv", "__pycache__"]
+
+# Supported test frameworks
+# Options: "pytest", "jest", "vitest", "playwright", "mocha"
+frameworks = ["pytest", "jest", "vitest", "playwright", "mocha"]
+
+# Badge color thresholds
+badge_red_threshold = 50    # Below this = red
+badge_yellow_threshold = 80 # Below this = yellow, above = green
+```
+
 ## Selective Testing
 
 ```toml

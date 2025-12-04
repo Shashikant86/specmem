@@ -158,6 +158,7 @@ extra:
 # Navigation
 nav:
   - 🏠 Home: index.md
+  - 💡 Why SpecMem: why-specmem.md
   - 🚀 Getting Started:
     - getting-started/index.md
     - 📦 Installation: getting-started/installation.md
@@ -167,10 +168,14 @@ nav:
     - user-guide/index.md
     - 🧠 Core Concepts: user-guide/concepts.md
     - 🔌 Adapters: user-guide/adapters.md
+    - ⚡ Kiro Powers: user-guide/kiro-powers.md
+    - 🔧 Kiro Configuration: user-guide/kiro-config.md
     - 📊 SpecImpact Graph: user-guide/specimpact.md
     - ⏱️ SpecDiff Timeline: user-guide/specdiff.md
     - ✅ SpecValidator: user-guide/validator.md
+    - 📈 Spec Coverage: user-guide/spec-coverage.md
     - 🎯 Selective Testing: user-guide/selective-testing.md
+    - 🔄 Spec Lifecycle: user-guide/spec-lifecycle.md
     - 🌐 Web UI: user-guide/web-ui.md
   - 💻 CLI Reference:
     - cli/index.md
@@ -180,14 +185,28 @@ nav:
     - specmem query: cli/query.md
     - specmem impact: cli/impact.md
     - specmem validate: cli/validate.md
+    - specmem cov: cli/cov.md
     - specmem serve: cli/serve.md
+    - specmem demo: cli/demo.md
+    - specmem health: cli/health.md
+    - specmem prune: cli/prune.md
+    - specmem generate: cli/generate.md
+    - specmem compress: cli/compress.md
+    - specmem kiro-config: cli/kiro-config.md
+    - specmem steering: cli/steering.md
   - 🐍 Python API:
     - api/index.md
     - SpecMemClient: api/client.md
     - Memory Bank: api/memory-bank.md
     - Vector Stores: api/vectordb.md
     - Adapters: api/adapters.md
+    - Power Adapter: api/power-adapter.md
+    - MCP Server: api/mcp-server.md
     - Impact Graph: api/impact-graph.md
+    - Health Score: api/health.md
+    - Coverage: api/coverage.md
+    - Lifecycle: api/lifecycle.md
+    - Kiro Config: api/kiro-config.md
   - 🔧 Advanced:
     - advanced/index.md
     - ✍️ Writing Adapters: advanced/writing-adapters.md

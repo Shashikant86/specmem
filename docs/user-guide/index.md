@@ -20,6 +20,11 @@ SpecMem provides a comprehensive toolkit for managing specifications and context
     <a href="adapters/" class="md-button">Explore →</a>
   </div>
   <div class="feature-card">
+    <h3><span class="emoji">⚡</span> Kiro Powers</h3>
+    <p>Use SpecMem as a Kiro Power with MCP tools.</p>
+    <a href="kiro-powers/" class="md-button">Integrate →</a>
+  </div>
+  <div class="feature-card">
     <h3><span class="emoji">📊</span> SpecImpact Graph</h3>
     <p>Understand relationships between specs, code, and tests.</p>
     <a href="specimpact/" class="md-button">Discover →</a>
@@ -35,9 +40,19 @@ SpecMem provides a comprehensive toolkit for managing specifications and context
     <a href="validator/" class="md-button">Validate →</a>
   </div>
   <div class="feature-card">
+    <h3><span class="emoji">📊</span> Spec Coverage</h3>
+    <p>Analyze gaps between acceptance criteria and tests.</p>
+    <a href="spec-coverage/" class="md-button">Analyze →</a>
+  </div>
+  <div class="feature-card">
     <h3><span class="emoji">🎯</span> Selective Testing</h3>
     <p>Run only the tests that matter for your changes.</p>
     <a href="selective-testing/" class="md-button">Optimize →</a>
+  </div>
+  <div class="feature-card">
+    <h3><span class="emoji">🔄</span> Spec Lifecycle</h3>
+    <p>Prune, generate, and compress specs pragmatically.</p>
+    <a href="spec-lifecycle/" class="md-button">Manage →</a>
   </div>
 </div>
 

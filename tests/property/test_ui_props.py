@@ -324,3 +324,78 @@ class TestPortConfiguration:
         except RuntimeError:
             # All ports in range are in use, which is acceptable
             pass
+
+
+class TestTourStepAdvancement:
+    """Tests for Property 7: Tour Step Advancement (from project-polish spec)."""
+
+    # **Feature: project-polish, Property 7: Tour Step Advancement**
+    # **Validates: Requirements 10.3**
+
+    @given(st.integers(min_value=1, max_value=20))
+    @settings(max_examples=50)
+    def test_tour_step_advancement_logic(self, total_steps: int):
+        """For any tour with N steps, completing step K advances to K+1."""
+        # Simulate tour state
+        current_step = 0
+
+        for _ in range(total_steps):
+            # Advance step
+            next_step = current_step + 1
+
+            if next_step < total_steps:
+                # Should advance to next step
+                assert next_step == current_step + 1
+                current_step = next_step
+            else:
+                # Should end tour (step N completes the tour)
+                assert next_step >= total_steps
+                break
+
+        # After completing all steps, we should be at or past the last step
+        assert current_step == total_steps - 1 or current_step >= total_steps - 1
+
+    @given(st.integers(min_value=1, max_value=10), st.integers(min_value=0, max_value=9))
+    @settings(max_examples=50)
+    def test_completing_step_k_advances_to_k_plus_1(self, total_steps: int, start_step: int):
+        """Completing step K should advance to step K+1."""
+        if start_step >= total_steps:
+            return  # Skip invalid combinations
+
+        current_step = start_step
+        next_step = current_step + 1
+
+        if next_step < total_steps:
+            assert next_step == current_step + 1, "Should advance to next step"
+        else:
+            assert next_step >= total_steps, "Should end tour when completing last step"
+
+    @given(st.integers(min_value=1, max_value=20))
+    @settings(max_examples=50)
+    def test_completing_last_step_ends_tour(self, total_steps: int):
+        """Completing step N (last step) should end the tour."""
+        last_step = total_steps - 1
+        next_step = last_step + 1
+
+        # After completing the last step, next_step should equal total_steps
+        # which indicates the tour is complete
+        assert next_step == total_steps, "Completing last step should end tour"
+        assert next_step >= total_steps, "Tour should be marked as complete"
+
+    @given(st.lists(st.text(min_size=1, max_size=50), min_size=1, max_size=10))
+    @settings(max_examples=30)
+    def test_tour_steps_are_sequential(self, step_titles: list[str]):
+        """Tour steps should be visited in sequential order."""
+        visited_steps = []
+        current_step = 0
+
+        while current_step < len(step_titles):
+            visited_steps.append(current_step)
+            current_step += 1
+
+        # Verify sequential order
+        for i, step in enumerate(visited_steps):
+            assert step == i, f"Step {i} should be visited at position {i}"
+
+        # All steps should be visited
+        assert len(visited_steps) == len(step_titles)

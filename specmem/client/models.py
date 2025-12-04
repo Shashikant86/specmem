@@ -59,12 +59,56 @@ class TestMapping:
 
 
 @dataclass
+class SteeringSummary:
+    """Summary of a steering file for context bundles."""
+
+    title: str
+    content: str
+    inclusion: str  # always, fileMatch, manual
+    pattern: str | None = None
+    source: str = ""
+
+    def to_dict(self) -> dict:
+        """Convert to dictionary."""
+        return {
+            "title": self.title,
+            "content": self.content,
+            "inclusion": self.inclusion,
+            "pattern": self.pattern,
+            "source": self.source,
+        }
+
+
+@dataclass
+class HookSummary:
+    """Summary of a hook for context bundles."""
+
+    name: str
+    description: str
+    trigger: str
+    action: str
+    pattern: str | None = None
+
+    def to_dict(self) -> dict:
+        """Convert to dictionary."""
+        return {
+            "name": self.name,
+            "description": self.description,
+            "trigger": self.trigger,
+            "action": self.action,
+            "pattern": self.pattern,
+        }
+
+
+@dataclass
 class ContextBundle:
     """Optimized context bundle for agent consumption."""
 
     specs: list[SpecSummary] = field(default_factory=list)
     designs: list[SpecSummary] = field(default_factory=list)
     tests: list[TestMapping] = field(default_factory=list)
+    steering: list[SteeringSummary] = field(default_factory=list)
+    triggered_hooks: list[HookSummary] = field(default_factory=list)
     tldr: str = ""
     total_tokens: int = 0
     token_budget: int = 4000
@@ -77,6 +121,8 @@ class ContextBundle:
             "specs": [s.to_dict() for s in self.specs],
             "designs": [d.to_dict() for d in self.designs],
             "tests": [t.to_dict() for t in self.tests],
+            "steering": [s.to_dict() for s in self.steering],
+            "triggered_hooks": [h.to_dict() for h in self.triggered_hooks],
             "tldr": self.tldr,
             "total_tokens": self.total_tokens,
             "token_budget": self.token_budget,
@@ -117,6 +163,25 @@ class ContextBundle:
             lines.append("")
             for test in self.tests:
                 lines.append(f"- `{test.path}` ({test.framework})")
+            lines.append("")
+
+        if self.steering:
+            lines.append("## Steering Guidelines")
+            lines.append("")
+            for s in self.steering:
+                lines.append(f"### {s.title}")
+                lines.append(f"*Inclusion: {s.inclusion}*")
+                lines.append("")
+                lines.append(s.content)
+                lines.append("")
+
+        if self.triggered_hooks:
+            lines.append("## Triggered Hooks")
+            lines.append("")
+            for h in self.triggered_hooks:
+                lines.append(f"- **{h.name}**: {h.description}")
+                if h.action:
+                    lines.append(f"  - Action: `{h.action}`")
             lines.append("")
 
         if self.changed_files:

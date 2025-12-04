@@ -17,6 +17,7 @@ class NodeType(str, Enum):
     SPEC = "spec"
     CODE = "code"
     TEST = "test"
+    POWER = "power"  # Kiro Power node
 
 
 class EdgeType(str, Enum):
@@ -26,6 +27,8 @@ class EdgeType(str, Enum):
     TESTS = "tests"  # Test validates spec
     DEPENDS_ON = "depends_on"  # Code depends on code
     REFERENCES = "references"  # Spec references spec
+    PROVIDES = "provides"  # Power provides capability to code/spec
+    USES = "uses"  # Spec/code uses Power tool
 
 
 @dataclass
@@ -125,12 +128,13 @@ class GraphEdge:
 class ImpactSet:
     """Complete impact set for a change.
 
-    Contains all specs, code, and tests affected by a set of file changes.
+    Contains all specs, code, tests, and powers affected by a set of file changes.
     """
 
     specs: list[GraphNode] = field(default_factory=list)
     code: list[GraphNode] = field(default_factory=list)
     tests: list[GraphNode] = field(default_factory=list)
+    powers: list[GraphNode] = field(default_factory=list)
     changed_files: list[str] = field(default_factory=list)
     depth: int = 0
     message: str = ""
@@ -141,6 +145,7 @@ class ImpactSet:
             "specs": [n.to_dict() for n in self.specs],
             "code": [n.to_dict() for n in self.code],
             "tests": [n.to_dict() for n in self.tests],
+            "powers": [n.to_dict() for n in self.powers],
             "changed_files": self.changed_files,
             "depth": self.depth,
             "message": self.message,
@@ -153,6 +158,7 @@ class ImpactSet:
             specs=[GraphNode.from_dict(n) for n in data.get("specs", [])],
             code=[GraphNode.from_dict(n) for n in data.get("code", [])],
             tests=[GraphNode.from_dict(n) for n in data.get("tests", [])],
+            powers=[GraphNode.from_dict(n) for n in data.get("powers", [])],
             changed_files=data.get("changed_files", []),
             depth=data.get("depth", 0),
             message=data.get("message", ""),
@@ -175,4 +181,4 @@ class ImpactSet:
 
     def is_empty(self) -> bool:
         """Check if the impact set is empty."""
-        return not self.specs and not self.code and not self.tests
+        return not self.specs and not self.code and not self.tests and not self.powers

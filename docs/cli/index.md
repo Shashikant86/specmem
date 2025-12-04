@@ -31,7 +31,18 @@ Options:
 | [`query`](query.md) | Search specifications |
 | [`impact`](impact.md) | Analyze impact of changes |
 | [`validate`](validate.md) | Validate specifications |
+| [`cov`](cov.md) | Analyze spec coverage |
 | [`serve`](serve.md) | Start the web UI |
+| [`demo`](demo.md) | Launch demo with SpecMem's own specs |
+
+### Lifecycle Commands
+
+| Command | Description |
+|---------|-------------|
+| [`health`](health.md) | Display spec health scores |
+| [`prune`](prune.md) | Archive or delete orphaned specs |
+| [`generate`](generate.md) | Generate specs from code |
+| [`compress`](compress.md) | Compress verbose specs |
 
 ## Quick Reference
 
@@ -54,8 +65,20 @@ specmem impact --files src/auth.py
 # Validate
 specmem validate
 
+# Spec coverage
+specmem cov
+
 # Web UI
 specmem serve
+
+# Demo (try SpecMem instantly)
+specmem demo
+
+# Lifecycle management
+specmem health                    # View spec health scores
+specmem prune --orphaned          # Archive orphaned specs
+specmem generate src/             # Generate specs from code
+specmem compress --all            # Compress verbose specs
 ```
 
 ## Configuration

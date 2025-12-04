@@ -136,6 +136,29 @@ rules = [
 min_severity = "warning"
 
 # =============================================================================
+# Coverage Configuration
+# =============================================================================
+[coverage]
+# Minimum confidence threshold for a criterion to be "covered"
+confidence_threshold = 0.5
+
+# Test file patterns to scan
+test_patterns = [
+    "test_*.py",
+    "*_test.py",
+    "*.test.ts",
+    "*.test.js",
+    "*.spec.ts",
+    "*.spec.js",
+]
+
+# Directories to scan for tests
+test_dirs = ["tests", "test", "spec", "__tests__"]
+
+# Exclude patterns
+exclude_patterns = ["node_modules", ".venv", "__pycache__"]
+
+# =============================================================================
 # Web UI Configuration
 # =============================================================================
 [ui]

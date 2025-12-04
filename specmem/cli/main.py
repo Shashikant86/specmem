@@ -14,6 +14,11 @@ from rich.table import Table
 from specmem import __version__
 from specmem.adapters import detect_adapters, get_registry
 from specmem.agentx import PackBuilder
+from specmem.cli.cov import app as cov_app
+from specmem.cli.demo import demo as demo_command
+from specmem.cli.kiro_config import steering_command
+from specmem.cli.lifecycle import app as lifecycle_app
+from specmem.cli.sessions import app as sessions_app
 from specmem.core import SpecMemConfig
 from specmem.core.memory_bank import MemoryBank
 from specmem.vectordb import SUPPORTED_BACKENDS, LanceDBStore, get_embedding_provider
@@ -24,6 +29,46 @@ app = typer.Typer(
     help="SpecMem - Unified Agent Memory for Spec-Driven Development",
     add_completion=False,
 )
+
+# Register subcommands
+app.add_typer(cov_app, name="cov")
+app.add_typer(sessions_app, name="sessions")
+app.add_typer(lifecycle_app, name="lifecycle")
+
+# Register demo command
+app.command(name="demo")(demo_command)
+
+# Register lifecycle commands as top-level aliases
+from specmem.cli.lifecycle import compress, generate, health, prune
+
+
+app.command(name="prune")(prune)
+app.command(name="generate")(generate)
+app.command(name="compress")(compress)
+app.command(name="health")(health)
+
+# Register kiro-config commands using click adapter
+
+
+# Create a click-based kiro-config command
+@app.command(name="kiro-config")
+def kiro_config_cmd(
+    path: str = typer.Option(".", "--path", "-p", help="Workspace path"),
+) -> None:
+    """Display summary of all Kiro configuration."""
+    from specmem.cli.kiro_config import show_config
+
+    show_config.callback(Path(path))
+
+
+@app.command(name="steering")
+def steering_cmd(
+    file: str = typer.Option(None, "--file", "-f", help="Show steering for this file"),
+    path: str = typer.Option(".", "--path", "-p", help="Workspace path"),
+) -> None:
+    """Query steering files applicable to a file."""
+    steering_command.callback(file, Path(path))
+
 
 console = Console()
 
@@ -50,22 +95,45 @@ def version() -> None:
 
 
 @app.command()
-def init(path: str = typer.Argument(".", help="Path to initialize")) -> None:
-    """Initialize SpecMem configuration in a directory."""
+def init(
+    path: str = typer.Argument(".", help="Path to initialize"),
+    hooks: bool = typer.Option(False, "--hooks", help="Install Kiro hooks for automation"),
+) -> None:
+    """Initialize SpecMem configuration in a directory.
+
+    Use --hooks to also install Kiro hooks for:
+    - Auto-validate specs on save
+    - Update coverage when tests change
+    - Context reminders for agents
+    """
     target_path = Path(path)
     config_path = target_path / ".specmem.toml"
 
     if config_path.exists():
         console.print(f"[yellow]Configuration already exists at {config_path}[/yellow]")
-        raise typer.Exit(1)
+        if not hooks:
+            raise typer.Exit(1)
+    else:
+        config = SpecMemConfig()
+        config.save(config_path)
+        console.print(f"[green]✓[/green] Initialized SpecMem at {config_path}")
 
-    config = SpecMemConfig()
-    config.save(config_path)
+    # Install Kiro hooks if requested
+    if hooks:
+        from specmem.hooks.generator import KiroHooksGenerator
 
-    console.print(f"[green]✓[/green] Initialized SpecMem at {config_path}")
+        generator = KiroHooksGenerator(target_path)
+        count = generator.write_hooks()
+        if count > 0:
+            console.print(f"[green]✓[/green] Installed {count} Kiro hook(s)")
+        else:
+            console.print("[yellow]![/yellow] Hooks already exist")
+
     console.print("\nNext steps:")
     console.print("  1. Run [bold]specmem scan[/bold] to detect specifications")
     console.print("  2. Run [bold]specmem build[/bold] to create the Agent Experience Pack")
+    if hooks:
+        console.print("  3. Kiro hooks are ready - specs will auto-validate on save!")
 
 
 @app.command("vector-backend")

@@ -74,6 +74,95 @@ async function fetchJson<T>(url: string, options?: RequestInit): Promise<T> {
   return response.json()
 }
 
+// Coverage types
+export interface CriterionResponse {
+  id: string
+  number: string
+  text: string
+  feature_name: string
+  is_covered: boolean
+  confidence: number
+  test_name: string | null
+  test_file: string | null
+}
+
+export interface FeatureCoverageResponse {
+  feature_name: string
+  total_count: number
+  tested_count: number
+  coverage_percentage: number
+  criteria: CriterionResponse[]
+}
+
+export interface CoverageResponse {
+  total_criteria: number
+  covered_criteria: number
+  coverage_percentage: number
+  features: FeatureCoverageResponse[]
+  badge_url: string
+}
+
+export interface TestSuggestionResponse {
+  criterion_id: string
+  criterion_text: string
+  feature_name: string
+  suggested_file: string
+  suggested_name: string
+  verification_points: string[]
+}
+
+// Session types
+export interface SessionMessageResponse {
+  role: string
+  content: string
+  timestamp_ms: number | null
+}
+
+export interface SessionResponse {
+  session_id: string
+  title: string
+  workspace_directory: string
+  date_created_ms: number
+  message_count: number
+  messages?: SessionMessageResponse[]
+}
+
+export interface SessionSearchResultResponse {
+  session: SessionResponse
+  score: number
+  matched_message_indices: number[]
+}
+
+export interface SessionListResponse {
+  sessions: SessionResponse[]
+  total: number
+}
+
+export interface SessionSearchResponse {
+  results: SessionSearchResultResponse[]
+  query: string
+}
+
+// Power types
+export interface PowerToolResponse {
+  name: string
+  description: string
+}
+
+export interface PowerResponse {
+  name: string
+  description: string
+  version: string | null
+  keywords: string[]
+  tools: PowerToolResponse[]
+  steering_files: string[]
+}
+
+export interface PowerListResponse {
+  powers: PowerResponse[]
+  total: number
+}
+
 export const api = {
   getBlocks: (status?: string, type?: string): Promise<BlockListResponse> => {
     const params = new URLSearchParams()
@@ -101,5 +190,278 @@ export const api = {
 
   exportPack: (): Promise<ExportResponse> => {
     return fetchJson(`${API_BASE}/export`, { method: 'POST' })
+  },
+
+  // Coverage endpoints
+  getCoverage: (): Promise<CoverageResponse> => {
+    return fetchJson(`${API_BASE}/coverage`)
+  },
+
+  getCoverageSuggestions: (feature?: string): Promise<TestSuggestionResponse[]> => {
+    const params = feature ? `?feature=${encodeURIComponent(feature)}` : ''
+    return fetchJson(`${API_BASE}/coverage/suggestions${params}`)
+  },
+
+  // Session endpoints
+  getSessions: (limit = 20, workspaceOnly = false): Promise<SessionListResponse> => {
+    return fetchJson(`${API_BASE}/sessions?limit=${limit}&workspace_only=${workspaceOnly}`)
+  },
+
+  searchSessions: (query: string, limit = 10): Promise<SessionSearchResponse> => {
+    return fetchJson(`${API_BASE}/sessions/search?q=${encodeURIComponent(query)}&limit=${limit}`)
+  },
+
+  getSession: (sessionId: string): Promise<SessionResponse> => {
+    return fetchJson(`${API_BASE}/sessions/${sessionId}`)
+  },
+
+  // Power endpoints
+  getPowers: (): Promise<PowerListResponse> => {
+    return fetchJson(`${API_BASE}/powers`)
+  },
+
+  getPower: (powerName: string): Promise<PowerResponse> => {
+    return fetchJson(`${API_BASE}/powers/${encodeURIComponent(powerName)}`)
+  },
+}
+
+
+// Health Score types
+export interface ScoreBreakdownResponse {
+  category: string
+  score: number
+  weight: number
+  weighted_score: number
+  details: string
+}
+
+export interface HealthScoreResponse {
+  overall_score: number
+  letter_grade: string
+  grade_color: string
+  breakdown: ScoreBreakdownResponse[]
+  suggestions: string[]
+  spec_count: number
+  feature_count: number
+}
+
+// Impact Graph types
+export interface GraphNodeResponse {
+  id: string
+  type: string
+  label: string
+  metadata: Record<string, unknown>
+  x: number | null
+  y: number | null
+}
+
+export interface GraphEdgeResponse {
+  source: string
+  target: string
+  relationship: string
+  weight: number
+}
+
+export interface ImpactGraphResponse {
+  nodes: GraphNodeResponse[]
+  edges: GraphEdgeResponse[]
+  stats: {
+    total_nodes: number
+    total_edges: number
+    nodes_by_type: Record<string, number>
+  }
+}
+
+// Quick Action types
+export interface ActionResultResponse {
+  success: boolean
+  action: string
+  message: string
+  data: Record<string, unknown> | null
+  error: string | null
+}
+
+// Add new API methods
+export const apiExtended = {
+  ...api,
+
+  // Health Score
+  getHealthScore: (): Promise<HealthScoreResponse> => {
+    return fetchJson(`${API_BASE}/health`)
+  },
+
+  // Impact Graph
+  getImpactGraph: (types?: string[]): Promise<ImpactGraphResponse> => {
+    const params = types ? `?types=${types.join(',')}` : ''
+    return fetchJson(`${API_BASE}/graph${params}`)
+  },
+
+  // Quick Actions
+  runAction: (action: string, params?: Record<string, string>): Promise<ActionResultResponse> => {
+    const queryParams = params ? `?${new URLSearchParams(params).toString()}` : ''
+    return fetchJson(`${API_BASE}/actions/${action}${queryParams}`, { method: 'POST' })
+  },
+
+  scanAction: (): Promise<ActionResultResponse> => {
+    return fetchJson(`${API_BASE}/actions/scan`, { method: 'POST' })
+  },
+
+  buildAction: (): Promise<ActionResultResponse> => {
+    return fetchJson(`${API_BASE}/actions/build`, { method: 'POST' })
+  },
+
+  validateAction: (): Promise<ActionResultResponse> => {
+    return fetchJson(`${API_BASE}/actions/validate`, { method: 'POST' })
+  },
+
+  coverageAction: (): Promise<ActionResultResponse> => {
+    return fetchJson(`${API_BASE}/actions/coverage`, { method: 'POST' })
+  },
+
+  queryAction: (q: string): Promise<ActionResultResponse> => {
+    return fetchJson(`${API_BASE}/actions/query?q=${encodeURIComponent(q)}`, { method: 'POST' })
+  },
+}
+
+
+// =============================================================================
+// Lifecycle API Types
+// =============================================================================
+
+export interface SpecHealthScoreResponse {
+  spec_id: string
+  spec_path: string
+  score: number
+  code_references: number
+  last_modified: string
+  query_count: number
+  is_orphaned: boolean
+  is_stale: boolean
+  compression_ratio: number | null
+  recommendations: string[]
+}
+
+export interface LifecycleHealthResponse {
+  total_specs: number
+  orphaned_count: number
+  stale_count: number
+  average_score: number
+  scores: SpecHealthScoreResponse[]
+}
+
+export interface PruneResultResponse {
+  spec_id: string
+  spec_path: string
+  action: string
+  archive_path: string | null
+  reason: string
+}
+
+export interface PruneRequest {
+  spec_names?: string[]
+  mode?: 'archive' | 'delete'
+  dry_run?: boolean
+  force?: boolean
+  orphaned?: boolean
+  stale?: boolean
+  stale_days?: number
+}
+
+export interface PruneResponse {
+  success: boolean
+  message: string
+  dry_run: boolean
+  results: PruneResultResponse[]
+}
+
+export interface GenerateRequest {
+  files: string[]
+  format?: string
+  group_by?: 'file' | 'directory' | 'module'
+  write?: boolean
+}
+
+export interface GeneratedSpecResponse {
+  spec_name: string
+  spec_path: string
+  source_files: string[]
+  adapter_format: string
+  content_preview: string
+  content_size: number
+}
+
+export interface GenerateResponse {
+  success: boolean
+  message: string
+  specs: GeneratedSpecResponse[]
+}
+
+export interface CompressRequest {
+  spec_names?: string[]
+  threshold?: number
+  all_verbose?: boolean
+  save?: boolean
+}
+
+export interface CompressedSpecResponse {
+  spec_id: string
+  original_size: number
+  compressed_size: number
+  compression_ratio: number
+  preserved_criteria_count: number
+}
+
+export interface CompressResponse {
+  success: boolean
+  message: string
+  results: CompressedSpecResponse[]
+  verbose_specs?: string[]
+}
+
+// =============================================================================
+// Lifecycle API Methods
+// =============================================================================
+
+export const lifecycleApi = {
+  // Get health scores for all specs
+  getHealth: (staleDays = 90): Promise<LifecycleHealthResponse> => {
+    return fetchJson(`${API_BASE}/lifecycle/health?stale_days=${staleDays}`)
+  },
+
+  // Get health score for a specific spec
+  getSpecHealth: (specName: string, staleDays = 90): Promise<SpecHealthScoreResponse> => {
+    return fetchJson(`${API_BASE}/lifecycle/health/${encodeURIComponent(specName)}?stale_days=${staleDays}`)
+  },
+
+  // Prune specs
+  prune: (request: PruneRequest): Promise<PruneResponse> => {
+    return fetchJson(`${API_BASE}/lifecycle/prune`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(request),
+    })
+  },
+
+  // Generate specs from code
+  generate: (request: GenerateRequest): Promise<GenerateResponse> => {
+    return fetchJson(`${API_BASE}/lifecycle/generate`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(request),
+    })
+  },
+
+  // Compress verbose specs
+  compress: (request: CompressRequest): Promise<CompressResponse> => {
+    return fetchJson(`${API_BASE}/lifecycle/compress`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(request),
+    })
+  },
+
+  // Quick action for lifecycle health
+  healthAction: (): Promise<ActionResultResponse> => {
+    return fetchJson(`${API_BASE}/actions/lifecycle-health`, { method: 'POST' })
   },
 }

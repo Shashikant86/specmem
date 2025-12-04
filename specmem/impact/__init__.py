@@ -10,6 +10,7 @@ from specmem.impact.graph_models import (
     ImpactSet,
     NodeType,
 )
+from specmem.impact.power_builder import PowerGraphBuilder
 
 
 __all__ = [
@@ -20,6 +21,7 @@ __all__ = [
     "ImpactResult",
     "ImpactSet",
     "NodeType",
+    "PowerGraphBuilder",
     "SpecImpactAnalyzer",
     "SpecImpactGraph",
 ]

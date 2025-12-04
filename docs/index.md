@@ -9,9 +9,9 @@ hide:
   <div class="hero-logo">
     <img src="assets/logo.png" alt="SpecMem Logo" />
   </div>
-  <h1>SpecMem</h1>
-  <p class="hero-tagline">Unified Agent Experience and Cognitive Memory for Every Coding Agent</p>
-  <p class="hero-description">SpecMem transforms scattered specs, outdated docs, and brittle agent prompts into a unified cognitive layer for your entire codebase. Give your coding agents the clarity, memory, and context they've always been missing.</p>
+  <h1 class="gradient-text">SpecMem</h1>
+  <p class="hero-tagline gradient-text-light">Unified Agent Experience and Pragmatic Memory for Every Coding Agent</p>
+  <p class="hero-description">AI coding agents forget everything between sessions, lock you into proprietary formats, and generate mountains of markdown nobody maintains. SpecMem fixes this: persistent memory, agent portability, and specs that stay alive.</p>
   <p class="hero-features">Executable Specs · Living Documentation · Impact-Aware Context</p>
   <p class="hero-badges">Open-source · Local-first · Agent-agnostic</p>
   <p class="hero-highlight">🏆 First ever Agent Experience tool built for Coding Agents</p>
@@ -23,24 +23,55 @@ hide:
 
 ## 🎯 The Problem
 
-Modern coding agents (Kiro, SpecKit, Tessl, Claude Code, Cursor, etc.) can generate files, follow tasks, and implement features — but they struggle with:
+### 📄 Markdown Madness & Verbosity
 
-| Problem | Impact |
-|---------|--------|
-| **Lack of persistent memory** | Agents forget specs and context when sessions reset |
-| **Code changes without spec awareness** | Agents write or modify code without knowing specs, acceptance criteria, designs, or earlier decisions |
-| **Over-testing and wasted compute** | Every change triggers full test runs, even when only a tiny module changed |
-| **No spec impact understanding** | Agents can't automatically identify which specs or tests relate to code modifications |
-| **Inconsistent agent performance** | No Agent Experience (AgentEx) layer — the equivalent of DevEx but for agents |
+Today's coding agents generate **mountains of markdown files**. Developers using Claude Code, Cursor, or any AI coding tool are drowning in `CLAUDE.md`, `AGENTS.md`, `.cursorrules`, `requirements.md`, `design.md`... **What happens to all these specs after features are built?** Nobody has figured out how to turn this chaos into better Agent Experience.
+
+### 🔒 Vendor Lock-In & Format Fragmentation
+
+Every coding agent uses **its own proprietary format**. Claude uses `CLAUDE.md`, Cursor uses `.cursorrules`, Kiro uses `.kiro/specs/`. This creates **massive IDE lock-in**. Switching agents means rewriting all your specs. Your project knowledge is trapped in one tool.
+
+### 🧠 Agents Have Amnesia
+
+Modern coding agents suffer from **catastrophic forgetting**. Sessions reset, context is lost, previous decisions vanish. Agents write code without knowing your specs, acceptance criteria, or earlier decisions. This causes regressions and misaligned implementations.
+
+### ⚡ Wasted Compute & Slow CI
+
+Without understanding **what changed**, agents trigger full test runs for every tiny change. This wastes compute, slows CI pipelines, and blocks development.
+
+### 📉 No Agent Experience (AgentEx) Layer
+
+We have **DevEx** (Developer Experience) for humans. But where is **AgentEx** for AI coding agents? There's no unified memory layer, no context optimization, no impact analysis, no spec-to-test mapping.
 
 <div class="consequences">
 <p><strong>These issues cause:</strong> regressions, misaligned implementations, slow CI pipelines, unpredictable agent behavior, and increased costs.</p>
-<p><strong>The industry lacks a Cognitive Memory + AgentEx platform to fix this.</strong></p>
+<p><strong>The industry lacks a Pragmatic Memory + AgentEx platform to fix this. Until now.</strong></p>
 </div>
 
-## 💡 The Solution
+## ⚖️ Pragmatic SDD: Not Waterfall, Not Chaos
 
-**SpecMem** is a unified, embeddable memory layer for AI coding agents built on Spec-Driven Development (SDD) metadata.
+Spec-Driven Development has real problems: verbose docs, waterfall vibes, spec rot. But pure "vibe coding" means agents forget everything and repeat mistakes.
+
+**SpecMem strikes the balance:**
+
+- **Specs as Memory**: Not bureaucratic gates, but searchable knowledge
+- **Selective Context**: SpecImpact gives agents only relevant specs, not everything
+- **Living Docs**: SpecDiff detects drift, SpecValidator finds contradictions
+- **Gradual Adoption**: Start with any format, no big-bang migration
+
+## 💡 The Solution: SpecMem
+
+**SpecMem** is the **first-ever Agent Experience (AgentEx) platform**: a unified, embeddable memory layer for AI coding agents.
+
+### How SpecMem Solves Each Problem
+
+| Problem | SpecMem Solution |
+|---------|------------------|
+| **Markdown Madness** | Concise spec templates, auto TL;DRs, living documentation |
+| **Vendor Lock-In** | Agent-agnostic adapters: read ANY format, output to ANY agent |
+| **Agent Amnesia** | Persistent cognitive memory with semantic search |
+| **Wasted Compute** | SpecImpact selects only impacted specs/tests to execute |
+| **No AgentEx** | Complete Agent Experience layer with context optimization |
 
 ```bash
 pip install specmem
@@ -81,6 +112,37 @@ print(bundle.tldr)
   </div>
 </div>
 
+## ⚡ Built for Kiro
+
+SpecMem was built during **Kiroween 2025** with first-class Kiro support. Your `.kiro/specs/` become living, searchable agent memory.
+
+<div class="feature-grid">
+  <div class="feature-card">
+    <h3><span class="emoji">⚡</span> Kiro Powers</h3>
+    <p>Install SpecMem as a Kiro Power for seamless IDE integration. Query specs, analyze impact, and get context-aware suggestions without leaving Kiro.</p>
+  </div>
+  <div class="feature-card">
+    <h3><span class="emoji">🔗</span> MCP Server</h3>
+    <p>Full Model Context Protocol support. Kiro's agent can query your specs, analyze impact, and get optimized context automatically via MCP tools.</p>
+  </div>
+  <div class="feature-card">
+    <h3><span class="emoji">📄</span> Native Kiro Adapter</h3>
+    <p>First-class support for <code>.kiro/specs/</code> structure: requirements.md, design.md, tasks.md parsed into searchable, trackable memory.</p>
+  </div>
+</div>
+
+```json
+// Add to your mcp.json for instant Kiro integration
+{
+  "mcpServers": {
+    "specmem": {
+      "command": "uvx",
+      "args": ["specmem-mcp"]
+    }
+  }
+}
+```
+
 ## 🔄 The Killer Feature
 
 **Swap agents without losing context.** SpecMem creates a unified, normalized, agent-agnostic context layer.
@@ -119,6 +181,15 @@ Switch from Kiro → SpecKit → Tessl → Claude Code → Cursor without rewrit
 
 ## 🚀 Quick Start
 
+### Try It Now
+
+```bash
+# See SpecMem in action with its own specs (dogfooding!)
+specmem demo
+```
+
+This launches the Web UI with SpecMem's own specifications - the best way to explore the features.
+
 === "CLI"
 
     ```bash
@@ -136,6 +207,9 @@ Switch from Kiro → SpecKit → Tessl → Claude Code → Cursor without rewrit
 
     # Analyze impact of code changes
     specmem impact --files src/auth/service.py
+
+    # Launch Web UI
+    specmem serve
     ```
 
 === "Python"
@@ -178,5 +252,5 @@ SpecMem generates a `.specmem/` directory containing everything your agents need
 **SpecMem** is developed by [Superagentic AI](https://super-agentic.ai) as part of the Kiroween Hackathon, December 2025.
 
 <p align="center">
-  <sub>Built with ❤️ for the AI coding agent community</sub>
+  <sub>Built for the AI coding agent community</sub>
 </p>

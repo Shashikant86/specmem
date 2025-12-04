@@ -27,6 +27,9 @@ Advanced topics for power users and contributors.
   </div>
 </div>
 
+!!! tip "Kiro Powers"
+    SpecMem is available as a [Kiro Power](../user-guide/kiro-powers.md) for seamless integration with Kiro IDE. Install it from the Powers panel or configure manually.
+
 ## Architecture Deep Dive
 
 ```mermaid
