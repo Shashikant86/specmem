@@ -52,7 +52,7 @@ We have **DevEx** (Developer Experience) for humans. But where is **AgentEx** fo
 
 > **These issues cause:** regressions, misaligned implementations, slow CI pipelines, unpredictable agent behavior, and increased costs.
 >
-> **The industry lacks a Cognitive Memory + AgentEx platform to fix this. Until now.**
+> **The industry lacks a Cognitive Memory + Agent Experience platform to fix this**
 
 ---
 

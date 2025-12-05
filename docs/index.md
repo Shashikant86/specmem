@@ -45,7 +45,7 @@ We have **DevEx** (Developer Experience) for humans. But where is **AgentEx** fo
 
 <div class="consequences">
 <p><strong>These issues cause:</strong> regressions, misaligned implementations, slow CI pipelines, unpredictable agent behavior, and increased costs.</p>
-<p><strong>The industry lacks a Pragmatic Memory + AgentEx platform to fix this. Until now.</strong></p>
+<p><strong>The industry lacks a Pragmatic Memory + Agent Experience platform to fix this</strong></p>
 </div>
 
 ## ⚖️ Pragmatic SDD: Not Waterfall, Not Chaos
