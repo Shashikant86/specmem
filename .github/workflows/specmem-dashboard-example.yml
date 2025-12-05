@@ -1,12 +1,17 @@
 # Example workflow for deploying SpecMem static dashboard to GitHub Pages
 # Copy this to your repository and customize as needed
+#
+# NOTE: This workflow is DISABLED by default.
+# It's an example for users to copy to their own repos.
+# The specmem package must be published to PyPI first.
 
 name: Deploy SpecMem Dashboard
 
 on:
-  push:
-    branches: [main]
-  workflow_dispatch:
+  workflow_dispatch:  # Manual trigger only - disabled for automatic runs
+  # Uncomment below when specmem is published to PyPI:
+  # push:
+  #   branches: [main]
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:

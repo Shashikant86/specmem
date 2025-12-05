@@ -1,14 +1,19 @@
 # Example workflow showing SpecMem GitHub Action usage
 # Copy this to your repository and customize as needed
+#
+# NOTE: This workflow is DISABLED by default.
+# It's an example for users to copy to their own repos.
+# The specmem package must be published to PyPI first.
 
 name: Spec Analysis
 
 on:
-  pull_request:
-    branches: [main, develop]
-  push:
-    branches: [main]
-  workflow_dispatch:
+  workflow_dispatch:  # Manual trigger only - disabled for automatic runs
+  # Uncomment below when specmem is published to PyPI:
+  # pull_request:
+  #   branches: [main, develop]
+  # push:
+  #   branches: [main]
 
 jobs:
   # ==========================================================================
