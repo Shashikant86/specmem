@@ -84,7 +84,9 @@ def list_guidelines(
                     "source_file": g.source_file,
                     "file_pattern": g.file_pattern,
                     "is_sample": g.is_sample,
-                    "content_preview": g.content[:200] + "..." if len(g.content) > 200 else g.content,
+                    "content_preview": g.content[:200] + "..."
+                    if len(g.content) > 200
+                    else g.content,
                 }
                 for g in guidelines
             ],
@@ -125,8 +127,9 @@ def list_guidelines(
     console.print(table)
 
     if len(guidelines) > 20:
-        console.print(f"\n[dim]Showing 20 of {len(guidelines)} guidelines. Use --robot for full list.[/dim]")
-
+        console.print(
+            f"\n[dim]Showing 20 of {len(guidelines)} guidelines. Use --robot for full list.[/dim]"
+        )
 
 
 @app.command("show")
@@ -236,9 +239,11 @@ def convert_guideline(
         default_output_dir = workspace_path / ".kiro" / "steering"
 
         console.print(f"\n[bold]Converting:[/bold] {guideline.title}")
-        console.print(f"[bold]Format:[/bold] Kiro Steering")
+        console.print("[bold]Format:[/bold] Kiro Steering")
         console.print(f"[bold]Output file:[/bold] {default_filename}")
-        console.print(f"[bold]Inclusion mode:[/bold] {result.frontmatter.get('inclusion', 'always')}")
+        console.print(
+            f"[bold]Inclusion mode:[/bold] {result.frontmatter.get('inclusion', 'always')}"
+        )
         if result.frontmatter.get("fileMatchPattern"):
             console.print(f"[bold]File pattern:[/bold] {result.frontmatter['fileMatchPattern']}")
     elif format_lower == "claude":
@@ -247,7 +252,7 @@ def convert_guideline(
         default_output_dir = workspace_path
 
         console.print(f"\n[bold]Converting:[/bold] {guideline.title}")
-        console.print(f"[bold]Format:[/bold] CLAUDE.md")
+        console.print("[bold]Format:[/bold] CLAUDE.md")
         console.print(f"[bold]Output file:[/bold] {default_filename}")
     else:  # cursor
         content = converter.to_cursor([guideline])
@@ -255,11 +260,13 @@ def convert_guideline(
         default_output_dir = workspace_path
 
         console.print(f"\n[bold]Converting:[/bold] {guideline.title}")
-        console.print(f"[bold]Format:[/bold] .cursorrules")
+        console.print("[bold]Format:[/bold] .cursorrules")
         console.print(f"[bold]Output file:[/bold] {default_filename}")
 
     console.print("\n[bold]Generated content:[/bold]\n")
-    console.print(Panel(content[:1000] + ("..." if len(content) > 1000 else ""), title=default_filename))
+    console.print(
+        Panel(content[:1000] + ("..." if len(content) > 1000 else ""), title=default_filename)
+    )
 
     if preview:
         console.print("\n[dim]Use --no-preview to write the file.[/dim]")
@@ -360,8 +367,12 @@ def convert_all_guidelines(
             content = converter.to_cursor(guidelines)
             default_filename = ".cursorrules"
 
-        console.print(f"\n[bold]Converting {len(guidelines)} guidelines to {default_filename}:[/bold]\n")
-        console.print(Panel(content[:1000] + ("..." if len(content) > 1000 else ""), title=default_filename))
+        console.print(
+            f"\n[bold]Converting {len(guidelines)} guidelines to {default_filename}:[/bold]\n"
+        )
+        console.print(
+            Panel(content[:1000] + ("..." if len(content) > 1000 else ""), title=default_filename)
+        )
 
         if preview:
             console.print("\n[dim]Use --no-preview to write the file.[/dim]")

@@ -63,7 +63,7 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v4
-      - uses: specmem/specmem/.github/actions/specmem-dashboard@main
+      - uses: SuperagenticAI/specmem/.github/actions/specmem-dashboard@main
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
 ```
@@ -139,7 +139,7 @@ If your repository already uses GitHub Pages for documentation (MkDocs, Jekyll, 
 Your docs stay at the root, dashboard at `/specmem-dashboard/`:
 
 ```yaml
-- uses: specmem/specmem/.github/actions/specmem-dashboard@main
+- uses: SuperagenticAI/specmem/.github/actions/specmem-dashboard@main
   with:
     github_token: ${{ secrets.GITHUB_TOKEN }}
     deploy_path: specmem-dashboard
@@ -148,7 +148,7 @@ Your docs stay at the root, dashboard at `/specmem-dashboard/`:
 **Option 2: Use a different path**
 
 ```yaml
-- uses: specmem/specmem/.github/actions/specmem-dashboard@main
+- uses: SuperagenticAI/specmem/.github/actions/specmem-dashboard@main
   with:
     github_token: ${{ secrets.GITHUB_TOKEN }}
     deploy_path: specs  # Deploy to /specs/
@@ -157,7 +157,7 @@ Your docs stay at the root, dashboard at `/specmem-dashboard/`:
 **Option 3: Force deployment (use with caution)**
 
 ```yaml
-- uses: specmem/specmem/.github/actions/specmem-dashboard@main
+- uses: SuperagenticAI/specmem/.github/actions/specmem-dashboard@main
   with:
     github_token: ${{ secrets.GITHUB_TOKEN }}
     force: true  # May overwrite existing content!
@@ -168,7 +168,7 @@ Your docs stay at the root, dashboard at `/specmem-dashboard/`:
 The dashboard can track metrics over time:
 
 ```yaml
-- uses: specmem/specmem/.github/actions/specmem-dashboard@main
+- uses: SuperagenticAI/specmem/.github/actions/specmem-dashboard@main
   with:
     github_token: ${{ secrets.GITHUB_TOKEN }}
     include_history: true
@@ -217,7 +217,7 @@ Historical charts showing:
 For monorepos, specify the working directory:
 
 ```yaml
-- uses: specmem/specmem/.github/actions/specmem-dashboard@main
+- uses: SuperagenticAI/specmem/.github/actions/specmem-dashboard@main
   with:
     github_token: ${{ secrets.GITHUB_TOKEN }}
     working_directory: packages/my-app
@@ -242,9 +242,9 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Deploy Dashboard
-        uses: specmem/specmem/.github/actions/specmem-dashboard@main
+        uses: SuperagenticAI/specmem/.github/actions/specmem-dashboard@main
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
 ```
@@ -265,9 +265,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       # Run analysis on PRs
-      - uses: specmem/specmem/.github/actions/specmem@main
+      - uses: SuperagenticAI/specmem/.github/actions/specmem@main
         if: github.event_name == 'pull_request'
         with:
           comment_on_pr: true
@@ -279,9 +279,9 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v4
-      
+
       # Deploy dashboard on main
-      - uses: specmem/specmem/.github/actions/specmem-dashboard@main
+      - uses: SuperagenticAI/specmem/.github/actions/specmem-dashboard@main
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
 ```

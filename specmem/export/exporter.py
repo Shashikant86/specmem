@@ -7,7 +7,6 @@ data bundles for static dashboard deployment.
 from __future__ import annotations
 
 import json
-import os
 import re
 import subprocess
 from datetime import datetime
@@ -28,6 +27,7 @@ def get_specmem_version() -> str:
     """Get the current SpecMem version."""
     try:
         from specmem import __version__
+
         return __version__
     except ImportError:
         return "unknown"
@@ -48,6 +48,7 @@ def get_git_info() -> tuple[str | None, str | None]:
             capture_output=True,
             text=True,
             timeout=5,
+            check=False,
         )
         if result.returncode == 0:
             commit_sha = result.stdout.strip()[:12]
@@ -60,6 +61,7 @@ def get_git_info() -> tuple[str | None, str | None]:
             capture_output=True,
             text=True,
             timeout=5,
+            check=False,
         )
         if result.returncode == 0:
             branch = result.stdout.strip()
@@ -151,6 +153,7 @@ class StaticExporter:
                 text=True,
                 cwd=self.workspace,
                 timeout=300,
+                check=False,
             )
             if result.stdout.strip():
                 return json.loads(result.stdout)

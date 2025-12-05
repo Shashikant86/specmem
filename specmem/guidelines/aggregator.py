@@ -109,10 +109,7 @@ class GuidelinesAggregator:
         matching: list[Guideline] = []
 
         for guideline in self._guidelines or []:
-            if (
-                query_lower in guideline.title.lower()
-                or query_lower in guideline.content.lower()
-            ):
+            if query_lower in guideline.title.lower() or query_lower in guideline.content.lower():
                 matching.append(guideline)
 
         return matching

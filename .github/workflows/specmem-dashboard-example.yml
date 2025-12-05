@@ -21,7 +21,7 @@ jobs:
   deploy:
     name: Deploy Dashboard
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -29,7 +29,7 @@ jobs:
           fetch-depth: 0  # Full history for trends
 
       - name: Deploy SpecMem Dashboard
-        uses: specmem/specmem/.github/actions/specmem-dashboard@main
+        uses: SuperagenticAI/specmem/.github/actions/specmem-dashboard@main
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           # Customize these options:
@@ -48,24 +48,24 @@ jobs:
   # deploy-manual:
   #   name: Manual Deploy
   #   runs-on: ubuntu-latest
-  #   
+  #
   #   steps:
   #     - uses: actions/checkout@v4
-  #     
+  #
   #     - name: Set up Python
   #       uses: actions/setup-python@v5
   #       with:
   #         python-version: '3.11'
-  #     
+  #
   #     - name: Install SpecMem
   #       run: pip install specmem
-  #     
+  #
   #     - name: Export spec data
   #       run: specmem export data --output .specmem/export
-  #     
+  #
   #     - name: Build static dashboard
   #       run: specmem export build --data .specmem/export --output .specmem/static
-  #     
+  #
   #     - name: Deploy to GitHub Pages
   #       uses: peaceiris/actions-gh-pages@v4
   #       with:

@@ -109,4 +109,3 @@
 
 - [x] 10. Final Checkpoint - Make sure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
-

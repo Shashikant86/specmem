@@ -170,7 +170,7 @@ jobs:
           specmem cov --robot > cov.json 2>&1 || true
           cat cov.json
           echo "::endgroup::"
-          
+
           # Extract coverage percentage
           COV=$(python3 -c "import json; d=json.load(open('cov.json')); print(d.get('coverage_percentage', 0))" 2>/dev/null || echo "0")
           echo "coverage=$COV" >> $GITHUB_OUTPUT
@@ -183,7 +183,7 @@ jobs:
           specmem health --robot > health.json 2>&1 || true
           cat health.json
           echo "::endgroup::"
-          
+
           # Extract health grade and score
           GRADE=$(python3 -c "import json; d=json.load(open('health.json')); print(d.get('letter_grade', 'N/A'))" 2>/dev/null || echo "N/A")
           SCORE=$(python3 -c "import json; d=json.load(open('health.json')); print(d.get('overall_score', 0))" 2>/dev/null || echo "0")
@@ -198,7 +198,7 @@ jobs:
           specmem validate --robot > validate.json 2>&1 || true
           cat validate.json
           echo "::endgroup::"
-          
+
           # Extract error count
           ERRORS=$(python3 -c "import json; d=json.load(open('validate.json')); print(len(d.get('errors', [])))" 2>/dev/null || echo "0")
           echo "errors=$ERRORS" >> $GITHUB_OUTPUT
@@ -210,28 +210,28 @@ jobs:
           GRADE="${{ steps.health.outputs.grade }}"
           SCORE="${{ steps.health.outputs.score }}"
           ERRORS="${{ steps.validate.outputs.errors }}"
-          
+
           # Determine status emojis
           COV_STATUS="⚠️"
           [[ $(echo "$COV >= 80" | bc -l 2>/dev/null || echo 0) -eq 1 ]] && COV_STATUS="✅"
           [[ $(echo "$COV < 50" | bc -l 2>/dev/null || echo 0) -eq 1 ]] && COV_STATUS="❌"
-          
+
           HEALTH_STATUS="⚠️"
           [[ "$GRADE" == "A" || "$GRADE" == "B" ]] && HEALTH_STATUS="✅"
           [[ "$GRADE" == "D" || "$GRADE" == "F" ]] && HEALTH_STATUS="❌"
-          
+
           VAL_STATUS="✅"
           [[ "$ERRORS" != "0" ]] && VAL_STATUS="❌"
-          
+
           cat >> $GITHUB_STEP_SUMMARY << EOF
           ## 📊 SpecMem Analysis
-          
+
           | Metric | Value | Status |
           |--------|-------|--------|
           | Spec Coverage | ${COV}% | ${COV_STATUS} |
           | Health Grade | ${GRADE} (${SCORE}/100) | ${HEALTH_STATUS} |
           | Validation Errors | ${ERRORS} | ${VAL_STATUS} |
-          
+
           ---
           *SpecMem dogfooding - analyzing our own specs!*
           EOF
@@ -245,31 +245,31 @@ jobs:
             const grade = '${{ steps.health.outputs.grade }}' || 'N/A';
             const score = '${{ steps.health.outputs.score }}' || '0';
             const errors = '${{ steps.validate.outputs.errors }}' || '0';
-            
+
             const covStatus = parseFloat(cov) >= 80 ? '✅' : parseFloat(cov) >= 50 ? '⚠️' : '❌';
             const healthStatus = ['A', 'B'].includes(grade) ? '✅' : grade === 'C' ? '⚠️' : '❌';
             const valStatus = errors === '0' ? '✅' : '❌';
-            
+
             const body = `## 📊 SpecMem Analysis
-            
+
             | Metric | Value | Status |
             |--------|-------|--------|
             | Spec Coverage | ${cov}% | ${covStatus} |
             | Health Grade | ${grade} (${score}/100) | ${healthStatus} |
             | Validation Errors | ${errors} | ${valStatus} |
-            
+
             ---
             *SpecMem dogfooding - analyzing our own specs!*`;
-            
+
             // Find existing comment
             const { data: comments } = await github.rest.issues.listComments({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
             });
-            
+
             const existing = comments.find(c => c.body.includes('SpecMem Analysis'));
-            
+
             if (existing) {
               await github.rest.issues.updateComment({
                 owner: context.repo.owner,

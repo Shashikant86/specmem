@@ -278,6 +278,7 @@ class WebServer:
                 if logo_path.exists():
                     return FileResponse(logo_path, media_type="image/png")
                 from fastapi import HTTPException
+
                 raise HTTPException(status_code=404, detail="Logo not found")
 
             @self.app.get("/")

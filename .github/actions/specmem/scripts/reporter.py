@@ -10,10 +10,9 @@ from __future__ import annotations
 import json
 import os
 import sys
-from typing import Any
-
-import urllib.request
 import urllib.error
+import urllib.request
+from typing import Any
 
 
 def format_markdown(results: dict[str, Any]) -> str:
@@ -96,9 +95,7 @@ def format_markdown(results: dict[str, Any]) -> str:
     return md
 
 
-def find_existing_comment(
-    token: str, repo: str, pr_number: int
-) -> int | None:
+def find_existing_comment(token: str, repo: str, pr_number: int) -> int | None:
     """Find existing SpecMem comment on PR.
 
     Args:
@@ -129,9 +126,7 @@ def find_existing_comment(
     return None
 
 
-def post_comment(
-    token: str, repo: str, pr_number: int, markdown: str
-) -> bool:
+def post_comment(token: str, repo: str, pr_number: int, markdown: str) -> bool:
     """Post or update PR comment.
 
     Args:

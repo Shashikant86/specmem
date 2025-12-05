@@ -142,7 +142,6 @@ class GuidelinesParser:
             content, str(file_path), SourceType.AGENTS, ["agents", "guidelines"]
         )
 
-
     def _parse_markdown_sections(
         self,
         content: str,

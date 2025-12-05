@@ -206,8 +206,8 @@ Manages user sessions and tokens.
         # Pre-warm cache by calling API endpoints (populates server-side cache)
         def prewarm_cache():
             """Pre-compute expensive data by calling API endpoints."""
-            import urllib.request
             import urllib.error
+            import urllib.request
 
             sleep(3)  # Wait for server to fully start
             base_url = f"http://127.0.0.1:{port}/api"
@@ -231,6 +231,7 @@ Manages user sessions and tokens.
                     pass
 
         import threading
+
         threading.Thread(target=prewarm_cache, daemon=True).start()
 
         if open_browser:
@@ -242,8 +243,6 @@ Manages user sessions and tokens.
             threading.Thread(target=open_browser_delayed, daemon=True).start()
 
         server.start()
-
-
 
 
 @app.command()

@@ -14,39 +14,39 @@ graph TB
         CURSOR[.cursorrules]
         STEERING[.kiro/steering/*.md]
     end
-    
+
     subgraph GuidelinesEngine
         SCANNER[GuidelinesScanner]
         PARSER[GuidelinesParser]
         CONVERTER[GuidelinesConverter]
         AGGREGATOR[GuidelinesAggregator]
     end
-    
+
     subgraph API
         ENDPOINT[/api/guidelines]
         CONVERT_EP[/api/guidelines/convert]
         EXPORT_EP[/api/guidelines/export]
     end
-    
+
     subgraph UI
         VIEW[Guidelines View]
         MODAL[Detail Modal]
         PREVIEW[Conversion Preview]
     end
-    
+
     CLAUDE --> SCANNER
     AGENTS --> SCANNER
     CURSOR --> SCANNER
     STEERING --> SCANNER
-    
+
     SCANNER --> PARSER
     PARSER --> AGGREGATOR
     AGGREGATOR --> ENDPOINT
-    
+
     PARSER --> CONVERTER
     CONVERTER --> CONVERT_EP
     CONVERTER --> EXPORT_EP
-    
+
     ENDPOINT --> VIEW
     VIEW --> MODAL
     CONVERT_EP --> PREVIEW
@@ -61,18 +61,18 @@ Scans the workspace for all guideline files.
 ```python
 class GuidelinesScanner:
     """Scans workspace for coding guideline files."""
-    
+
     FILE_PATTERNS = {
         "claude": ["**/CLAUDE.md", "**/Claude.md"],
         "agents": ["**/AGENTS.md", "**/Agents.md", "**/AGENT.md"],
         "cursor": ["**/.cursorrules", "**/cursor.rules"],
         "steering": [".kiro/steering/*.md"],
     }
-    
+
     def scan(self, workspace_path: Path) -> dict[str, list[Path]]:
         """Scan for all guideline files grouped by source type."""
         ...
-    
+
     def has_guidelines(self, workspace_path: Path) -> bool:
         """Check if any guideline files exist."""
         ...
@@ -97,19 +97,19 @@ class Guideline:
 
 class GuidelinesParser:
     """Parses guideline files into unified Guideline objects."""
-    
+
     def parse_claude(self, file_path: Path) -> list[Guideline]:
         """Parse CLAUDE.md file into guidelines."""
         ...
-    
+
     def parse_cursor(self, file_path: Path) -> list[Guideline]:
         """Parse .cursorrules file into guidelines."""
         ...
-    
+
     def parse_steering(self, file_path: Path) -> list[Guideline]:
         """Parse Kiro steering file into guidelines."""
         ...
-    
+
     def parse_agents(self, file_path: Path) -> list[Guideline]:
         """Parse AGENTS.md file into guidelines."""
         ...
@@ -126,26 +126,26 @@ class ConversionResult:
     filename: str
     content: str
     frontmatter: dict[str, Any]
-    
+
 class GuidelinesConverter:
     """Converts guidelines between different formats."""
-    
+
     def to_steering(self, guideline: Guideline) -> ConversionResult:
         """Convert a guideline to Kiro steering format."""
         ...
-    
+
     def to_claude(self, guidelines: list[Guideline]) -> str:
         """Convert guidelines to CLAUDE.md format."""
         ...
-    
+
     def to_cursor(self, guidelines: list[Guideline]) -> str:
         """Convert guidelines to .cursorrules format."""
         ...
-    
+
     def suggest_inclusion_mode(self, guideline: Guideline) -> str:
         """Suggest appropriate inclusion mode based on content."""
         ...
-    
+
     def suggest_file_pattern(self, guideline: Guideline) -> str | None:
         """Suggest file pattern based on guideline content."""
         ...
@@ -162,22 +162,22 @@ class GuidelinesResponse:
     guidelines: list[Guideline]
     total_count: int
     counts_by_source: dict[str, int]
-    
+
 class GuidelinesAggregator:
     """Aggregates and filters guidelines from all sources."""
-    
+
     def get_all(self, workspace_path: Path) -> GuidelinesResponse:
         """Get all guidelines from all sources."""
         ...
-    
+
     def filter_by_source(self, source_type: str) -> list[Guideline]:
         """Filter guidelines by source type."""
         ...
-    
+
     def filter_by_file(self, file_path: str) -> list[Guideline]:
         """Get guidelines that apply to a specific file."""
         ...
-    
+
     def search(self, query: str) -> list[Guideline]:
         """Search guidelines by title and content."""
         ...
@@ -190,15 +190,15 @@ Provides sample guidelines for demonstration.
 ```python
 class SampleGuidelinesProvider:
     """Provides sample guideline files for demonstration."""
-    
+
     def get_sample_claude(self) -> str:
         """Get sample CLAUDE.md content."""
         ...
-    
+
     def get_sample_cursorrules(self) -> str:
         """Get sample .cursorrules content."""
         ...
-    
+
     def get_sample_agents(self) -> str:
         """Get sample AGENTS.md content."""
         ...
@@ -329,20 +329,20 @@ from hypothesis import given, strategies as st
 
 class TestGuidelinesProps:
     """Property tests for Guidelines feature.
-    
+
     **Feature: coding-guidelines-view**
     """
-    
+
     @given(st.lists(st.builds(Guideline, ...)))
     def test_aggregation_completeness(self, guidelines: list[Guideline]) -> None:
         """Property 1: All guidelines are returned."""
         ...
-    
+
     @given(st.lists(st.builds(Guideline, ...)))
     def test_filter_correctness(self, guidelines: list[Guideline]) -> None:
         """Property 4: Filter returns correct subset."""
         ...
-    
+
     @given(st.builds(Guideline, ...))
     def test_conversion_round_trip(self, guideline: Guideline) -> None:
         """Property 7: Content preserved through conversion."""

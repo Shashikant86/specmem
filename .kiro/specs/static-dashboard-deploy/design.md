@@ -20,7 +20,7 @@ flowchart TB
         C --> D[Build Static Site]
         D --> E[Deploy to gh-pages]
     end
-    
+
     subgraph Export["Data Export"]
         C --> C1[specmem cov --robot]
         C --> C2[specmem health --robot]
@@ -28,13 +28,13 @@ flowchart TB
         C --> C4[Scan Specs]
         C1 & C2 & C3 & C4 --> C5[Bundle JSON]
     end
-    
+
     subgraph Build["Static Build"]
         D --> D1[Load JSON Data]
         D1 --> D2[Inject into React App]
         D2 --> D3[Build Production Bundle]
     end
-    
+
     subgraph Pages["GitHub Pages"]
         E --> F[Static HTML/JS/CSS]
         F --> G[User Browser]
@@ -72,19 +72,19 @@ class ExportBundle:
 
 class StaticExporter:
     """Exports spec data for static dashboard."""
-    
+
     def __init__(self, workspace: Path, output_dir: Path):
         self.workspace = workspace
         self.output_dir = output_dir
-    
+
     def export(self) -> ExportBundle:
         """Generate complete data export."""
         ...
-    
+
     def save(self, bundle: ExportBundle) -> Path:
         """Save bundle to JSON file."""
         ...
-    
+
     def append_history(self, bundle: ExportBundle, history_file: Path) -> None:
         """Append current metrics to history file."""
         ...
@@ -95,22 +95,22 @@ class StaticExporter:
 ```python
 class StaticSiteBuilder:
     """Builds static dashboard site."""
-    
+
     def __init__(self, data_path: Path, output_dir: Path):
         self.data_path = data_path
         self.output_dir = output_dir
-    
+
     def build(self) -> Path:
         """Build static site with embedded data.
-        
+
         Returns:
             Path to built site directory
         """
         ...
-    
+
     def inject_data(self, data: dict) -> str:
         """Inject data into HTML template.
-        
+
         Returns:
             HTML with embedded JSON data
         """
@@ -175,7 +175,7 @@ interface ExportData {
     branch: string | null;
     specmem_version: string;
   };
-  
+
   coverage: {
     coverage_percentage: number;
     features: Array<{
@@ -185,7 +185,7 @@ interface ExportData {
       total_count: number;
     }>;
   };
-  
+
   health: {
     overall_score: number;
     letter_grade: string;
@@ -195,12 +195,12 @@ interface ExportData {
       weight: number;
     }>;
   };
-  
+
   validation: {
     errors: string[];
     warnings: string[];
   };
-  
+
   specs: Array<{
     name: string;
     path: string;
@@ -212,14 +212,14 @@ interface ExportData {
       completed: number;
     };
   }>;
-  
+
   guidelines: Array<{
     name: string;
     path: string;
     content: string;
     source_format: string;
   }>;
-  
+
   history: Array<{
     timestamp: string;
     coverage_percentage: number;

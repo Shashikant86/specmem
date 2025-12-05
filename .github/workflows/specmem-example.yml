@@ -17,13 +17,13 @@ jobs:
   analyze:
     name: SpecMem Analysis
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Run SpecMem Analysis
-        uses: specmem/specmem/.github/actions/specmem@main
+        uses: SuperagenticAI/specmem/.github/actions/specmem@main
         id: specmem
         with:
           commands: cov,health,validate
@@ -47,12 +47,12 @@ jobs:
     name: Quality Gate
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
-    
+
     steps:
       - uses: actions/checkout@v4
 
       - name: Run SpecMem with Thresholds
-        uses: specmem/specmem/.github/actions/specmem@main
+        uses: SuperagenticAI/specmem/.github/actions/specmem@main
         with:
           commands: cov,health
           coverage_threshold: 70
@@ -65,12 +65,12 @@ jobs:
   custom-checks:
     name: Custom Checks
     runs-on: ubuntu-latest
-    
+
     steps:
       - uses: actions/checkout@v4
 
       - name: Run SpecMem
-        uses: specmem/specmem/.github/actions/specmem@main
+        uses: SuperagenticAI/specmem/.github/actions/specmem@main
         id: specmem
         with:
           commands: cov,health
@@ -103,12 +103,12 @@ jobs:
     strategy:
       matrix:
         package: [frontend, backend, shared]
-    
+
     steps:
       - uses: actions/checkout@v4
 
       - name: Analyze ${{ matrix.package }}
-        uses: specmem/specmem/.github/actions/specmem@main
+        uses: SuperagenticAI/specmem/.github/actions/specmem@main
         with:
           working_directory: packages/${{ matrix.package }}
           commands: cov,health
@@ -120,13 +120,13 @@ jobs:
     name: Test with Dev Version
     runs-on: ubuntu-latest
     if: false  # Disabled by default
-    
+
     steps:
       - uses: actions/checkout@v4
 
       - name: Run with GitHub version
-        uses: specmem/specmem/.github/actions/specmem@main
+        uses: SuperagenticAI/specmem/.github/actions/specmem@main
         with:
           install_from: github
-          github_repo: specmem/specmem
+          github_repo: SuperagenticAI/specmem
           version: main  # or a specific branch/tag/commit

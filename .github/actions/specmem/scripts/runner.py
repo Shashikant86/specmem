@@ -11,7 +11,7 @@ import json
 import os
 import subprocess
 import sys
-from dataclasses import asdict, dataclass
+from dataclasses import dataclass
 from pathlib import Path
 
 
@@ -44,7 +44,8 @@ def run_command(cmd: str, working_dir: str) -> CommandResult:
             cwd=working_dir,
             capture_output=True,
             text=True,
-            timeout=300,  # 5 minute timeout
+            timeout=300,
+            check=False,  # 5 minute timeout
         )
 
         # Try to parse JSON output

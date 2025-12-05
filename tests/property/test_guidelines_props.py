@@ -5,7 +5,8 @@
 
 from __future__ import annotations
 
-from hypothesis import given, strategies as st
+from hypothesis import given
+from hypothesis import strategies as st
 
 from specmem.guidelines.models import Guideline, GuidelinesResponse, SourceType
 
@@ -63,7 +64,6 @@ class TestGuidelinesModelProps:
         """Guideline ID has consistent length."""
         generated_id = Guideline.generate_id(source, title)
         assert len(generated_id) == 16
-
 
 
 class TestGuidelinesScannerProps:
@@ -125,7 +125,6 @@ class TestGuidelinesScannerProps:
             result = scanner.scan()
             assert result == {}
             assert not scanner.has_guidelines()
-
 
 
 class TestGuidelinesParserProps:
@@ -201,7 +200,6 @@ class TestGuidelinesParserProps:
 
             for g in steering_guidelines:
                 assert g.source_type == SourceType.STEERING
-
 
 
 class TestGuidelinesAggregatorProps:
@@ -296,7 +294,6 @@ class TestGuidelinesAggregatorProps:
         assert len(js_results) == len(expected_js)
 
 
-
 class TestGuidelinesConverterProps:
     """Property tests for GuidelinesConverter.
 
@@ -372,7 +369,6 @@ class TestGuidelinesConverterProps:
         for g in guidelines:
             assert g.title in cursor_output
             assert g.content in cursor_output
-
 
 
 class TestSampleGuidelinesProps:

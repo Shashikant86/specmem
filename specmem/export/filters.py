@@ -7,7 +7,6 @@ and can be translated to JavaScript for client-side filtering.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Callable
 
 from specmem.export.models import SpecData
 
@@ -204,13 +203,15 @@ def matches_all_criteria(
     # Check query
     if criteria.query:
         query_lower = criteria.query.lower()
-        if not any([
-            query_lower in spec.name.lower(),
-            query_lower in spec.path.lower(),
-            query_lower in spec.requirements.lower(),
-            spec.design and query_lower in spec.design.lower(),
-            spec.tasks and query_lower in spec.tasks.lower(),
-        ]):
+        if not any(
+            [
+                query_lower in spec.name.lower(),
+                query_lower in spec.path.lower(),
+                query_lower in spec.requirements.lower(),
+                spec.design and query_lower in spec.design.lower(),
+                spec.tasks and query_lower in spec.tasks.lower(),
+            ]
+        ):
             return False
 
     # Check feature

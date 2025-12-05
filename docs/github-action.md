@@ -25,7 +25,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: specmem/specmem/.github/actions/specmem@main
+      - uses: SuperagenticAI/specmem/.github/actions/specmem@main
 ```
 
 ## Installation Options
@@ -33,7 +33,7 @@ jobs:
 ### From PyPI (Recommended)
 
 ```yaml
-- uses: specmem/specmem/.github/actions/specmem@main
+- uses: SuperagenticAI/specmem/.github/actions/specmem@main
   with:
     install_from: pypi
     version: latest
@@ -42,17 +42,17 @@ jobs:
 ### From GitHub (Latest Development)
 
 ```yaml
-- uses: specmem/specmem/.github/actions/specmem@main
+- uses: SuperagenticAI/specmem/.github/actions/specmem@main
   with:
     install_from: github
-    github_repo: specmem/specmem
+    github_repo: SuperagenticAI/specmem
     version: main
 ```
 
 ### Pinned Version
 
 ```yaml
-- uses: specmem/specmem/.github/actions/specmem@main
+- uses: SuperagenticAI/specmem/.github/actions/specmem@main
   with:
     version: "0.1.0"
 ```
@@ -64,7 +64,7 @@ jobs:
 | `commands` | Commands to run (comma-separated: `cov,health,validate`) | `cov,health` |
 | `install_from` | Installation source: `pypi` or `github` | `pypi` |
 | `version` | Version (PyPI) or git ref (GitHub) | `latest` |
-| `github_repo` | GitHub repo for installation | `specmem/specmem` |
+| `github_repo` | GitHub repo for installation | `SuperagenticAI/specmem` |
 | `working_directory` | Directory to run analysis in | `.` |
 | `comment_on_pr` | Post results as PR comment | `true` |
 | `coverage_threshold` | Minimum coverage percentage (0-100) | `0` |
@@ -88,7 +88,7 @@ jobs:
 ### Basic Analysis
 
 ```yaml
-- uses: specmem/specmem/.github/actions/specmem@main
+- uses: SuperagenticAI/specmem/.github/actions/specmem@main
 ```
 
 ### With Quality Thresholds
@@ -96,7 +96,7 @@ jobs:
 Fail the build if quality drops:
 
 ```yaml
-- uses: specmem/specmem/.github/actions/specmem@main
+- uses: SuperagenticAI/specmem/.github/actions/specmem@main
   with:
     coverage_threshold: 80
     health_threshold: B
@@ -108,7 +108,7 @@ Fail the build if quality drops:
 Run coverage, health, and validation:
 
 ```yaml
-- uses: specmem/specmem/.github/actions/specmem@main
+- uses: SuperagenticAI/specmem/.github/actions/specmem@main
   with:
     commands: cov,health,validate
 ```
@@ -118,7 +118,7 @@ Run coverage, health, and validation:
 Analyze specs in a subdirectory:
 
 ```yaml
-- uses: specmem/specmem/.github/actions/specmem@main
+- uses: SuperagenticAI/specmem/.github/actions/specmem@main
   with:
     working_directory: packages/my-app
 ```
@@ -126,14 +126,14 @@ Analyze specs in a subdirectory:
 ### Use Outputs in Subsequent Steps
 
 ```yaml
-- uses: specmem/specmem/.github/actions/specmem@main
+- uses: SuperagenticAI/specmem/.github/actions/specmem@main
   id: specmem
 
 - name: Check Results
   run: |
     echo "Coverage: ${{ steps.specmem.outputs.coverage_percentage }}%"
     echo "Health: ${{ steps.specmem.outputs.health_grade }}"
-    
+
 - name: Custom Logic
   if: steps.specmem.outputs.health_grade == 'F'
   run: echo "::warning::Health grade is failing!"
@@ -142,7 +142,7 @@ Analyze specs in a subdirectory:
 ### Without PR Comments
 
 ```yaml
-- uses: specmem/specmem/.github/actions/specmem@main
+- uses: SuperagenticAI/specmem/.github/actions/specmem@main
   with:
     comment_on_pr: false
 ```
@@ -160,7 +160,7 @@ jobs:
         python: ['3.11', '3.12']
     steps:
       - uses: actions/checkout@v4
-      - uses: specmem/specmem/.github/actions/specmem@main
+      - uses: SuperagenticAI/specmem/.github/actions/specmem@main
         with:
           python_version: ${{ matrix.python }}
 ```
@@ -233,9 +233,9 @@ Ensure the installation step completed successfully. Check the "Install SpecMem"
 Check the actual values in the action output:
 
 ```yaml
-- uses: specmem/specmem/.github/actions/specmem@main
+- uses: SuperagenticAI/specmem/.github/actions/specmem@main
   id: specmem
-  
+
 - run: |
     echo "Coverage: ${{ steps.specmem.outputs.coverage_percentage }}"
     echo "Health: ${{ steps.specmem.outputs.health_grade }}"
@@ -280,7 +280,7 @@ flowchart LR
 Begin by running the action without thresholds to establish a baseline:
 
 ```yaml
-- uses: specmem/specmem/.github/actions/specmem@main
+- uses: SuperagenticAI/specmem/.github/actions/specmem@main
   with:
     commands: cov,health,validate
     # No thresholds - just monitoring
@@ -289,7 +289,7 @@ Begin by running the action without thresholds to establish a baseline:
 After a few PRs, you'll understand your typical coverage and health scores. Then gradually introduce thresholds:
 
 ```yaml
-- uses: specmem/specmem/.github/actions/specmem@main
+- uses: SuperagenticAI/specmem/.github/actions/specmem@main
   with:
     coverage_threshold: 60  # Start conservative
     health_threshold: C     # Allow some flexibility
@@ -312,7 +312,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: specmem/specmem/.github/actions/specmem@main
+      - uses: SuperagenticAI/specmem/.github/actions/specmem@main
         with:
           comment_on_pr: true
 
@@ -322,7 +322,7 @@ jobs:
     if: github.base_ref == 'main'
     steps:
       - uses: actions/checkout@v4
-      - uses: specmem/specmem/.github/actions/specmem@main
+      - uses: SuperagenticAI/specmem/.github/actions/specmem@main
         with:
           coverage_threshold: 80
           health_threshold: B
@@ -335,7 +335,7 @@ jobs:
 For stability, pin to a specific version:
 
 ```yaml
-- uses: specmem/specmem/.github/actions/specmem@v0.1.0
+- uses: SuperagenticAI/specmem/.github/actions/specmem@v0.1.0
   with:
     version: "0.1.0"
 ```
@@ -352,15 +352,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Run Tests
         run: pytest --cov
-      
+
       - name: Upload Coverage
         uses: codecov/codecov-action@v4
-      
+
       - name: Spec Analysis
-        uses: specmem/specmem/.github/actions/specmem@main
+        uses: SuperagenticAI/specmem/.github/actions/specmem@main
 ```
 
 ### With Dependabot
@@ -378,11 +378,11 @@ jobs:
     if: github.actor == 'dependabot[bot]'
     steps:
       - uses: actions/checkout@v4
-      - uses: specmem/specmem/.github/actions/specmem@main
+      - uses: SuperagenticAI/specmem/.github/actions/specmem@main
         with:
           coverage_threshold: 70
           health_threshold: C
-      
+
       - name: Auto-merge
         run: gh pr merge --auto --squash "$PR_URL"
         env:
@@ -395,7 +395,7 @@ jobs:
 Post results to Slack on failures:
 
 ```yaml
-- uses: specmem/specmem/.github/actions/specmem@main
+- uses: SuperagenticAI/specmem/.github/actions/specmem@main
   id: specmem
   continue-on-error: true
   with:
@@ -427,23 +427,23 @@ Post results to Slack on failures:
 Create a rich summary in the Actions UI:
 
 ```yaml
-- uses: specmem/specmem/.github/actions/specmem@main
+- uses: SuperagenticAI/specmem/.github/actions/specmem@main
   id: specmem
 
 - name: Create Summary
   run: |
     cat >> $GITHUB_STEP_SUMMARY << EOF
     ## 📊 SpecMem Analysis
-    
+
     | Metric | Value | Status |
     |--------|-------|--------|
     | Coverage | ${{ steps.specmem.outputs.coverage_percentage }}% | $([[ ${{ steps.specmem.outputs.coverage_percentage }} -ge 80 ]] && echo "✅" || echo "⚠️") |
     | Health | ${{ steps.specmem.outputs.health_grade }} | $([[ "${{ steps.specmem.outputs.health_grade }}" =~ ^[AB]$ ]] && echo "✅" || echo "⚠️") |
     | Errors | ${{ steps.specmem.outputs.validation_errors }} | $([[ ${{ steps.specmem.outputs.validation_errors }} -eq 0 ]] && echo "✅" || echo "❌") |
-    
+
     <details>
     <summary>Full Results JSON</summary>
-    
+
     \`\`\`json
     ${{ steps.specmem.outputs.results_json }}
     \`\`\`

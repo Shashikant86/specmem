@@ -30,7 +30,11 @@ def feature_coverage_strategy(draw: st.DrawFn) -> FeatureCoverage:
     tested = draw(st.integers(min_value=0, max_value=total))
     coverage = (tested / total * 100) if total > 0 else 0.0
     return FeatureCoverage(
-        feature_name=draw(st.text(min_size=1, max_size=50, alphabet=st.characters(whitelist_categories=("L", "N")))),
+        feature_name=draw(
+            st.text(
+                min_size=1, max_size=50, alphabet=st.characters(whitelist_categories=("L", "N"))
+            )
+        ),
         coverage_percentage=coverage,
         tested_count=tested,
         total_count=total,
@@ -41,7 +45,9 @@ def feature_coverage_strategy(draw: st.DrawFn) -> FeatureCoverage:
 def health_breakdown_strategy(draw: st.DrawFn) -> HealthBreakdown:
     """Generate random HealthBreakdown."""
     return HealthBreakdown(
-        category=draw(st.text(min_size=1, max_size=30, alphabet=st.characters(whitelist_categories=("L",)))),
+        category=draw(
+            st.text(min_size=1, max_size=30, alphabet=st.characters(whitelist_categories=("L",)))
+        ),
         score=draw(st.floats(min_value=0, max_value=100, allow_nan=False)),
         weight=draw(st.floats(min_value=0, max_value=1, allow_nan=False)),
     )
@@ -53,8 +59,20 @@ def spec_data_strategy(draw: st.DrawFn) -> SpecData:
     total = draw(st.integers(min_value=0, max_value=50))
     completed = draw(st.integers(min_value=0, max_value=total))
     return SpecData(
-        name=draw(st.text(min_size=1, max_size=30, alphabet=st.characters(whitelist_categories=("L", "N", "Pd")))),
-        path=draw(st.text(min_size=1, max_size=100, alphabet=st.characters(whitelist_categories=("L", "N", "Pd", "Pc")))),
+        name=draw(
+            st.text(
+                min_size=1,
+                max_size=30,
+                alphabet=st.characters(whitelist_categories=("L", "N", "Pd")),
+            )
+        ),
+        path=draw(
+            st.text(
+                min_size=1,
+                max_size=100,
+                alphabet=st.characters(whitelist_categories=("L", "N", "Pd", "Pc")),
+            )
+        ),
         requirements=draw(st.text(min_size=1, max_size=500)),
         design=draw(st.one_of(st.none(), st.text(min_size=1, max_size=500))),
         tasks=draw(st.one_of(st.none(), st.text(min_size=1, max_size=500))),
@@ -67,8 +85,18 @@ def spec_data_strategy(draw: st.DrawFn) -> SpecData:
 def guideline_data_strategy(draw: st.DrawFn) -> GuidelineData:
     """Generate random GuidelineData."""
     return GuidelineData(
-        name=draw(st.text(min_size=1, max_size=30, alphabet=st.characters(whitelist_categories=("L", "N")))),
-        path=draw(st.text(min_size=1, max_size=100, alphabet=st.characters(whitelist_categories=("L", "N", "Pd", "Pc")))),
+        name=draw(
+            st.text(
+                min_size=1, max_size=30, alphabet=st.characters(whitelist_categories=("L", "N"))
+            )
+        ),
+        path=draw(
+            st.text(
+                min_size=1,
+                max_size=100,
+                alphabet=st.characters(whitelist_categories=("L", "N", "Pd", "Pc")),
+            )
+        ),
         content=draw(st.text(min_size=1, max_size=500)),
         source_format=draw(st.sampled_from(["kiro", "claude", "cursor"])),
     )
@@ -90,8 +118,19 @@ def export_metadata_strategy(draw: st.DrawFn) -> ExportMetadata:
     """Generate random ExportMetadata."""
     return ExportMetadata(
         generated_at=datetime.now(),
-        commit_sha=draw(st.one_of(st.none(), st.text(min_size=7, max_size=12, alphabet="0123456789abcdef"))),
-        branch=draw(st.one_of(st.none(), st.text(min_size=1, max_size=30, alphabet=st.characters(whitelist_categories=("L", "N", "Pd"))))),
+        commit_sha=draw(
+            st.one_of(st.none(), st.text(min_size=7, max_size=12, alphabet="0123456789abcdef"))
+        ),
+        branch=draw(
+            st.one_of(
+                st.none(),
+                st.text(
+                    min_size=1,
+                    max_size=30,
+                    alphabet=st.characters(whitelist_categories=("L", "N", "Pd")),
+                ),
+            )
+        ),
         specmem_version=draw(st.text(min_size=1, max_size=20, alphabet="0123456789.")),
     )
 
@@ -106,11 +145,17 @@ def export_bundle_strategy(draw: st.DrawFn) -> ExportBundle:
         health_score=draw(st.floats(min_value=0, max_value=100, allow_nan=False)),
         health_grade=draw(st.sampled_from(["A", "B", "C", "D", "F", "N/A"])),
         health_breakdown=draw(st.lists(health_breakdown_strategy(), min_size=0, max_size=5)),
-        validation_errors=draw(st.lists(st.text(min_size=1, max_size=100), min_size=0, max_size=10)),
-        validation_warnings=draw(st.lists(st.text(min_size=1, max_size=100), min_size=0, max_size=10)),
+        validation_errors=draw(
+            st.lists(st.text(min_size=1, max_size=100), min_size=0, max_size=10)
+        ),
+        validation_warnings=draw(
+            st.lists(st.text(min_size=1, max_size=100), min_size=0, max_size=10)
+        ),
         specs=draw(st.lists(spec_data_strategy(), min_size=0, max_size=5)),
         guidelines=draw(st.lists(guideline_data_strategy(), min_size=0, max_size=5)),
-        history=draw(st.one_of(st.none(), st.lists(history_entry_strategy(), min_size=0, max_size=10))),
+        history=draw(
+            st.one_of(st.none(), st.lists(history_entry_strategy(), min_size=0, max_size=10))
+        ),
     )
 
 
@@ -231,9 +276,7 @@ class TestHistoryAppend:
         bundle=export_bundle_strategy(),
     )
     @settings(max_examples=100)
-    def test_append_increases_count_by_one(
-        self, initial_count: int, bundle: ExportBundle
-    ) -> None:
+    def test_append_increases_count_by_one(self, initial_count: int, bundle: ExportBundle) -> None:
         """For any history with N entries, appending results in N+1 entries."""
         with tempfile.TemporaryDirectory() as tmpdir:
             history_file = Path(tmpdir) / "history.json"
@@ -348,7 +391,7 @@ class TestHistoryTruncation:
             assert result[-1].coverage_percentage == float(entry_count - 1)
 
 
-from specmem.export.conflicts import ConflictDetector, CONFLICT_PATTERNS
+from specmem.export.conflicts import CONFLICT_PATTERNS, ConflictDetector
 
 
 class TestConflictDetection:
@@ -364,7 +407,7 @@ class TestConflictDetection:
         """For any known conflict pattern, detector returns a warning."""
         with tempfile.TemporaryDirectory() as tmpdir:
             target_dir = Path(tmpdir)
-            
+
             # Create the conflict file
             conflict_file = target_dir / pattern
             conflict_file.parent.mkdir(parents=True, exist_ok=True)
@@ -431,7 +474,7 @@ class TestOverwriteProtection:
         """Deployment fails without force when conflicts exist."""
         with tempfile.TemporaryDirectory() as tmpdir:
             target_dir = Path(tmpdir)
-            
+
             # Create conflict file
             conflict_file = target_dir / pattern
             conflict_file.write_text("test content")
@@ -448,7 +491,7 @@ class TestOverwriteProtection:
         """Deployment succeeds with force even when conflicts exist."""
         with tempfile.TemporaryDirectory() as tmpdir:
             target_dir = Path(tmpdir)
-            
+
             # Create conflict file
             conflict_file = target_dir / pattern
             conflict_file.write_text("test content")
@@ -474,11 +517,11 @@ class TestOverwriteProtection:
 
 from specmem.export.filters import (
     FilterCriteria,
-    filter_specs,
-    search_specs,
     filter_by_status,
+    filter_specs,
     get_spec_status,
     matches_all_criteria,
+    search_specs,
 )
 
 
@@ -491,24 +534,26 @@ class TestClientSideSearchFiltering:
 
     @given(
         specs=st.lists(spec_data_strategy(), min_size=1, max_size=10),
-        query=st.text(min_size=1, max_size=20, alphabet=st.characters(whitelist_categories=("L", "N"))),
+        query=st.text(
+            min_size=1, max_size=20, alphabet=st.characters(whitelist_categories=("L", "N"))
+        ),
     )
     @settings(max_examples=100)
-    def test_search_results_contain_query(
-        self, specs: list[SpecData], query: str
-    ) -> None:
+    def test_search_results_contain_query(self, specs: list[SpecData], query: str) -> None:
         """For any search query, all results contain the query in name or content."""
         results = search_specs(specs, query)
         query_lower = query.lower()
 
         for spec in results:
-            found = any([
-                query_lower in spec.name.lower(),
-                query_lower in spec.path.lower(),
-                query_lower in spec.requirements.lower(),
-                spec.design and query_lower in spec.design.lower(),
-                spec.tasks and query_lower in spec.tasks.lower(),
-            ])
+            found = any(
+                [
+                    query_lower in spec.name.lower(),
+                    query_lower in spec.path.lower(),
+                    query_lower in spec.requirements.lower(),
+                    spec.design and query_lower in spec.design.lower(),
+                    spec.tasks and query_lower in spec.tasks.lower(),
+                ]
+            )
             assert found, f"Query '{query}' not found in spec '{spec.name}'"
 
     @given(specs=st.lists(spec_data_strategy(), min_size=0, max_size=10))
@@ -526,9 +571,7 @@ class TestClientSideSearchFiltering:
         query=st.text(min_size=1, max_size=20),
     )
     @settings(max_examples=100)
-    def test_search_is_case_insensitive(
-        self, specs: list[SpecData], query: str
-    ) -> None:
+    def test_search_is_case_insensitive(self, specs: list[SpecData], query: str) -> None:
         """Search is case-insensitive."""
         results_lower = search_specs(specs, query.lower())
         results_upper = search_specs(specs, query.upper())
@@ -548,9 +591,7 @@ class TestMultiCriteriaFiltering:
         status=st.sampled_from(["complete", "in_progress", "not_started"]),
     )
     @settings(max_examples=100)
-    def test_status_filter_matches_criteria(
-        self, specs: list[SpecData], status: str
-    ) -> None:
+    def test_status_filter_matches_criteria(self, specs: list[SpecData], status: str) -> None:
         """For any status filter, all results have matching status."""
         results = filter_by_status(specs, status)
 
@@ -559,7 +600,10 @@ class TestMultiCriteriaFiltering:
 
     @given(
         specs=st.lists(spec_data_strategy(), min_size=1, max_size=10),
-        query=st.one_of(st.none(), st.text(min_size=1, max_size=10, alphabet=st.characters(whitelist_categories=("L",)))),
+        query=st.one_of(
+            st.none(),
+            st.text(min_size=1, max_size=10, alphabet=st.characters(whitelist_categories=("L",))),
+        ),
         status=st.one_of(st.none(), st.sampled_from(["complete", "in_progress", "not_started"])),
     )
     @settings(max_examples=100)
@@ -622,13 +666,15 @@ class TestDeployPathConfiguration:
         assert f'<base href="{base_path}">' in html
 
     @given(
-        path=st.sampled_from([
-            "specmem-dashboard",
-            "specs",
-            "dashboard",
-            "my-project-specs",
-            "docs/specs",
-        ])
+        path=st.sampled_from(
+            [
+                "specmem-dashboard",
+                "specs",
+                "dashboard",
+                "my-project-specs",
+                "docs/specs",
+            ]
+        )
     )
     @settings(max_examples=50)
     def test_common_paths_work(self, path: str) -> None:

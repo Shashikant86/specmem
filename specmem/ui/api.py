@@ -1880,9 +1880,7 @@ async def export_guidelines(request: ExportRequest) -> ExportResultResponse:
             content = converter.to_cursor(response.guidelines)
             filename = ".cursorrules"
         else:
-            raise HTTPException(
-                status_code=400, detail=f"Invalid format: {request.format}"
-            )
+            raise HTTPException(status_code=400, detail=f"Invalid format: {request.format}")
 
         return ExportResultResponse(
             format=request.format,

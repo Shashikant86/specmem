@@ -40,6 +40,7 @@ app.add_typer(lifecycle_app, name="lifecycle")
 # Register export commands for static dashboard
 from specmem.cli.export import app as export_app
 
+
 app.add_typer(export_app, name="export")
 
 # Register demo command

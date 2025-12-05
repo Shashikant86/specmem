@@ -109,4 +109,3 @@ This feature provides a GitHub Action that enables users to run SpecMem analysis
 1. WHEN the action runs THEN the Action SHALL cache the pip installation
 2. WHEN a cache hit occurs THEN the Action SHALL skip installation and use cached packages
 3. WHEN the version changes THEN the Action SHALL invalidate the cache and reinstall
-

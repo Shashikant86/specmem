@@ -18,7 +18,7 @@ from hypothesis import given, strategies as st
 
 class TestMyFeatureProps:
     """Property tests for MyFeature.
-    
+
     **Feature: my-feature, Property 1: Round-trip consistency**
     **Validates: Requirements 1.2**
     """

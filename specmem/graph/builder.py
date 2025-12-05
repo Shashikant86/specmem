@@ -215,7 +215,8 @@ class ImpactGraphBuilder:
     ) -> list[GraphEdge]:
         """Build edges from specs to code files using heuristics."""
         edges = []
-        code_node_ids = {c.id for c in code_nodes}
+        # Note: code_node_ids could be used for validation but currently unused
+        # code_node_ids = {c.id for c in code_nodes}
 
         # Build edges using name matching heuristics
         for spec in specs:

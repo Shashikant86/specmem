@@ -11,17 +11,17 @@ Tests the core logic of the GitHub Action scripts including:
 
 from __future__ import annotations
 
-import json
 import sys
 from pathlib import Path
 
-import pytest
-from hypothesis import given, settings, assume
+from hypothesis import given, settings
 from hypothesis import strategies as st
 
 
 # Add the action scripts to path for testing
-ACTION_SCRIPTS_PATH = Path(__file__).parent.parent.parent / ".github" / "actions" / "specmem" / "scripts"
+ACTION_SCRIPTS_PATH = (
+    Path(__file__).parent.parent.parent / ".github" / "actions" / "specmem" / "scripts"
+)
 if ACTION_SCRIPTS_PATH.exists():
     sys.path.insert(0, str(ACTION_SCRIPTS_PATH))
 
@@ -57,13 +57,15 @@ command_list_strategy = st.lists(
 )
 
 # Strategy for analysis results
-results_strategy = st.fixed_dictionaries({
-    "coverage_percentage": coverage_strategy,
-    "health_grade": grade_strategy,
-    "health_score": health_score_strategy,
-    "validation_errors": error_count_strategy,
-    "commands": st.just({}),
-})
+results_strategy = st.fixed_dictionaries(
+    {
+        "coverage_percentage": coverage_strategy,
+        "health_grade": grade_strategy,
+        "health_score": health_score_strategy,
+        "validation_errors": error_count_strategy,
+        "commands": st.just({}),
+    }
+)
 
 
 # =============================================================================
@@ -71,6 +73,7 @@ results_strategy = st.fixed_dictionaries({
 # For any valid install_from value, the correct pip command is generated
 # Validates: Requirements 1.2, 1.3
 # =============================================================================
+
 
 @given(
     install_from=st.sampled_from(["pypi", "github"]),
@@ -92,11 +95,10 @@ def test_installation_source_selection(install_from: str, version: str, github_r
             expected_contains = f"git+https://github.com/{github_repo}.git"
         else:
             expected_contains = f"git+https://github.com/{github_repo}.git@{version}"
-    else:  # pypi
-        if version == "latest":
-            expected_contains = "pip install specmem"
-        else:
-            expected_contains = f"specmem=={version}"
+    elif version == "latest":
+        expected_contains = "pip install specmem"
+    else:
+        expected_contains = f"specmem=={version}"
 
     # The action.yml contains the installation logic
     # We verify the expected pattern would be generated
@@ -109,6 +111,7 @@ def test_installation_source_selection(install_from: str, version: str, github_r
 # For any list of valid commands, all commands are executed
 # Validates: Requirements 2.1, 2.2
 # =============================================================================
+
 
 @given(commands=command_list_strategy)
 @settings(max_examples=100)
@@ -140,6 +143,7 @@ def test_command_execution_completeness(commands: list[str]) -> None:
 # Validates: Requirements 3.2
 # =============================================================================
 
+
 @given(results=results_strategy)
 @settings(max_examples=100)
 def test_markdown_formatting_consistency(results: dict) -> None:
@@ -162,7 +166,9 @@ def test_markdown_formatting_consistency(results: dict) -> None:
             validation_errors = results.get("validation_errors", 0)
 
             cov_emoji = "✅" if coverage >= 80 else "⚠️" if coverage >= 50 else "❌"
-            health_emoji = "✅" if health_grade in ["A", "B"] else "⚠️" if health_grade == "C" else "❌"
+            health_emoji = (
+                "✅" if health_grade in ["A", "B"] else "⚠️" if health_grade == "C" else "❌"
+            )
             val_emoji = "✅" if validation_errors == 0 else "❌"
 
             return f"""## 📊 SpecMem Analysis
@@ -195,6 +201,7 @@ def test_markdown_formatting_consistency(results: dict) -> None:
 # Validates: Requirements 4.2
 # =============================================================================
 
+
 @given(
     coverage=coverage_strategy,
     threshold=coverage_strategy,
@@ -208,6 +215,7 @@ def test_threshold_evaluation_correctness(coverage: float, threshold: float) -> 
 
     **Validates: Requirements 4.2**
     """
+
     # Import or implement the check function
     def check_coverage_threshold(coverage: float, threshold: float) -> str | None:
         if threshold > 0 and coverage < threshold:
@@ -232,6 +240,7 @@ def test_threshold_evaluation_correctness(coverage: float, threshold: float) -> 
 # For any grade pair, correct ordering is applied
 # Validates: Requirements 4.3
 # =============================================================================
+
 
 @given(
     current_grade=grade_strategy,
@@ -276,6 +285,7 @@ def test_health_grade_comparison(current_grade: str, threshold_grade: str) -> No
 # Validates: Requirements 6.2
 # =============================================================================
 
+
 @given(results=results_strategy)
 @settings(max_examples=100)
 def test_output_completeness(results: dict) -> None:
@@ -299,14 +309,14 @@ def test_output_completeness(results: dict) -> None:
         assert field in results, f"Missing required output: {field}"
 
     # Verify types are correct
-    assert isinstance(results["coverage_percentage"], (int, float))
+    assert isinstance(results["coverage_percentage"], int | float)
     assert isinstance(results["health_grade"], str)
-    assert isinstance(results["health_score"], (int, float))
+    assert isinstance(results["health_score"], int | float)
     assert isinstance(results["validation_errors"], int)
 
     # Verify values are in valid ranges
     assert 0 <= results["coverage_percentage"] <= 100
-    assert results["health_grade"] in VALID_GRADES + ["N/A"]
+    assert results["health_grade"] in [*VALID_GRADES, "N/A"]
     assert 0 <= results["health_score"] <= 100
     assert results["validation_errors"] >= 0
 
@@ -314,6 +324,7 @@ def test_output_completeness(results: dict) -> None:
 # =============================================================================
 # Additional edge case tests
 # =============================================================================
+
 
 def test_empty_command_list_handling() -> None:
     """Test that empty command list is handled gracefully."""

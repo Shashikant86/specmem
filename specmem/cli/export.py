@@ -14,6 +14,7 @@ from rich.console import Console
 from specmem.export.exporter import StaticExporter
 from specmem.export.history import HistoryManager
 
+
 app = typer.Typer(help="Export spec data for static dashboard deployment")
 console = Console()
 
@@ -22,7 +23,8 @@ console = Console()
 def export_data(
     output: Path = typer.Option(
         Path(".specmem/export"),
-        "--output", "-o",
+        "--output",
+        "-o",
         help="Output directory for export",
     ),
     include_history: bool = typer.Option(
@@ -78,12 +80,14 @@ def export_data(
 def build_static(
     data_dir: Path = typer.Option(
         Path(".specmem/export"),
-        "--data", "-d",
+        "--data",
+        "-d",
         help="Directory containing exported data",
     ),
     output: Path = typer.Option(
         Path(".specmem/static"),
-        "--output", "-o",
+        "--output",
+        "-o",
         help="Output directory for static site",
     ),
     base_path: str = typer.Option(
@@ -154,12 +158,12 @@ def _generate_static_html(data: dict, base_path: str) -> str:
     validation = data.get("validation", {})
     specs = data.get("specs", [])
     guidelines = data.get("guidelines", [])
-    history = data.get("history", [])
+    _ = data.get("history", [])  # History is embedded in data_json
 
     # Escape data for embedding in HTML
     data_json = json.dumps(data).replace("</", "<\\/")
 
-    return f'''<!DOCTYPE html>
+    return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -296,33 +300,33 @@ def _generate_static_html(data: dict, base_path: str) -> str:
         </header>
 
         <div class="meta">
-            Generated: {metadata.get('generated_at', 'Unknown')} |
-            Commit: {metadata.get('commit_sha', 'N/A')} |
-            Branch: {metadata.get('branch', 'N/A')} |
-            Version: {metadata.get('specmem_version', 'Unknown')}
+            Generated: {metadata.get("generated_at", "Unknown")} |
+            Commit: {metadata.get("commit_sha", "N/A")} |
+            Branch: {metadata.get("branch", "N/A")} |
+            Version: {metadata.get("specmem_version", "Unknown")}
         </div>
 
         <div class="cards">
             <div class="card">
                 <div class="card-title">Spec Coverage</div>
-                <div class="card-value {'success' if coverage.get('coverage_percentage', 0) >= 80 else 'warning' if coverage.get('coverage_percentage', 0) >= 50 else 'danger'}">
-                    {coverage.get('coverage_percentage', 0):.1f}%
+                <div class="card-value {"success" if coverage.get("coverage_percentage", 0) >= 80 else "warning" if coverage.get("coverage_percentage", 0) >= 50 else "danger"}">
+                    {coverage.get("coverage_percentage", 0):.1f}%
                 </div>
             </div>
             <div class="card">
                 <div class="card-title">Health Grade</div>
-                <div class="card-value {'success' if health.get('letter_grade', 'N/A') in ['A', 'B'] else 'warning' if health.get('letter_grade', 'N/A') == 'C' else 'danger'}">
-                    {health.get('letter_grade', 'N/A')}
+                <div class="card-value {"success" if health.get("letter_grade", "N/A") in ["A", "B"] else "warning" if health.get("letter_grade", "N/A") == "C" else "danger"}">
+                    {health.get("letter_grade", "N/A")}
                 </div>
             </div>
             <div class="card">
                 <div class="card-title">Health Score</div>
-                <div class="card-value">{health.get('overall_score', 0):.0f}</div>
+                <div class="card-value">{health.get("overall_score", 0):.0f}</div>
             </div>
             <div class="card">
                 <div class="card-title">Validation Errors</div>
-                <div class="card-value {'success' if len(validation.get('errors', [])) == 0 else 'danger'}">
-                    {len(validation.get('errors', []))}
+                <div class="card-value {"success" if len(validation.get("errors", [])) == 0 else "danger"}">
+                    {len(validation.get("errors", []))}
                 </div>
             </div>
         </div>
@@ -331,14 +335,14 @@ def _generate_static_html(data: dict, base_path: str) -> str:
             <h2 class="section-title">📋 Specifications ({len(specs)})</h2>
             <input type="text" class="search-box" placeholder="Search specs..." id="spec-search">
             <div class="spec-list" id="spec-list">
-                {''.join(_render_spec_item(spec) for spec in specs)}
+                {"".join(_render_spec_item(spec) for spec in specs)}
             </div>
         </div>
 
         <div class="section">
             <h2 class="section-title">📜 Guidelines ({len(guidelines)})</h2>
             <div class="spec-list">
-                {''.join(_render_guideline_item(g) for g in guidelines)}
+                {"".join(_render_guideline_item(g) for g in guidelines)}
             </div>
         </div>
     </div>
@@ -362,32 +366,32 @@ def _generate_static_html(data: dict, base_path: str) -> str:
         }});
     </script>
 </body>
-</html>'''
+</html>"""
 
 
 def _render_spec_item(spec: dict) -> str:
     """Render a single spec item."""
-    total = spec.get('task_total', 0)
-    completed = spec.get('task_completed', 0)
+    total = spec.get("task_total", 0)
+    completed = spec.get("task_completed", 0)
     progress = (completed / total * 100) if total > 0 else 0
 
-    return f'''
-        <div class="spec-item" data-name="{spec.get('name', '')}" data-path="{spec.get('path', '')}">
-            <div class="spec-name">{spec.get('name', 'Unknown')}</div>
-            <div class="spec-path">{spec.get('path', '')}</div>
+    return f"""
+        <div class="spec-item" data-name="{spec.get("name", "")}" data-path="{spec.get("path", "")}">
+            <div class="spec-name">{spec.get("name", "Unknown")}</div>
+            <div class="spec-path">{spec.get("path", "")}</div>
             <div class="progress-bar">
                 <div class="progress-fill" style="width: {progress}%"></div>
             </div>
             <div class="spec-path">{completed}/{total} tasks complete</div>
         </div>
-    '''
+    """
 
 
 def _render_guideline_item(guideline: dict) -> str:
     """Render a single guideline item."""
-    return f'''
+    return f"""
         <div class="spec-item">
-            <div class="spec-name">{guideline.get('name', 'Unknown')}</div>
-            <div class="spec-path">{guideline.get('path', '')} ({guideline.get('source_format', 'unknown')})</div>
+            <div class="spec-name">{guideline.get("name", "Unknown")}</div>
+            <div class="spec-path">{guideline.get("path", "")} ({guideline.get("source_format", "unknown")})</div>
         </div>
-    '''
+    """

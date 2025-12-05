@@ -34,7 +34,7 @@ inputs:
   github_repo:
     description: 'GitHub repo for installation (owner/repo)'
     required: false
-    default: 'specmem/specmem'
+    default: 'SuperagenticAI/specmem'
   github_token:
     description: 'GitHub token for deployment'
     required: true
@@ -98,19 +98,19 @@ runs:
       working-directory: ${{ inputs.working_directory }}
       run: |
         echo "::group::Exporting spec data"
-        
+
         HISTORY_FLAG=""
         if [ "${{ inputs.include_history }}" = "true" ]; then
           HISTORY_FLAG="--include-history"
         else
           HISTORY_FLAG="--no-history"
         fi
-        
+
         specmem export data \
           --output .specmem/export \
           $HISTORY_FLAG \
           --history-limit ${{ inputs.history_limit }}
-        
+
         echo "export_path=.specmem/export" >> $GITHUB_OUTPUT
         echo "::endgroup::"
 
@@ -185,10 +185,10 @@ runs:
         REPO_NAME="${{ github.repository }}"
         OWNER="${REPO_NAME%%/*}"
         REPO="${REPO_NAME##*/}"
-        
+
         # Construct GitHub Pages URL
         DASHBOARD_URL="https://${OWNER}.github.io/${REPO}/${{ inputs.deploy_path }}/"
-        
+
         echo "dashboard_url=${DASHBOARD_URL}" >> $GITHUB_OUTPUT
         echo ""
         echo "📊 Dashboard deployed!"

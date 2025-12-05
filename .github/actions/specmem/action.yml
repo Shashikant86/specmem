@@ -22,7 +22,7 @@ inputs:
   github_repo:
     description: 'GitHub repo for installation (owner/repo)'
     required: false
-    default: 'specmem/specmem'
+    default: 'SuperagenticAI/specmem'
   working_directory:
     description: 'Directory to run analysis in'
     required: false

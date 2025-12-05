@@ -196,11 +196,11 @@ import { CoverageResponse, FeatureCoverageResponse, CriterionResponse } from './
 
 type CoverageFilter = 'all' | 'covered' | 'uncovered'
 
-const CoverageView = ({ 
-  coverageData, 
+const CoverageView = ({
+  coverageData,
   coverageLoading,
   getCoverageBg
-}: { 
+}: {
   coverageData: CoverageResponse | undefined
   coverageLoading: boolean
   getCoverageBg: (pct: number) => string
@@ -258,19 +258,19 @@ const CoverageView = ({
         </div>
         {/* Filter Buttons */}
         <div className="flex gap-2">
-          <button 
+          <button
             onClick={() => setFilter('all')}
             className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${filter === 'all' ? 'bg-violet-500 text-white' : 'bg-white dark:bg-zinc-900 text-slate-700 dark:text-white border border-slate-200 dark:border-zinc-700 hover:bg-slate-50 dark:hover:bg-zinc-800'}`}
           >
             All ({coverageData.total_criteria})
           </button>
-          <button 
+          <button
             onClick={() => setFilter('covered')}
             className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${filter === 'covered' ? 'bg-emerald-500 text-white' : 'bg-white dark:bg-zinc-900 text-slate-700 dark:text-white border border-slate-200 dark:border-zinc-700 hover:bg-slate-50 dark:hover:bg-zinc-800'}`}
           >
             ✅ Covered ({coverageData.covered_criteria})
           </button>
-          <button 
+          <button
             onClick={() => setFilter('uncovered')}
             className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${filter === 'uncovered' ? 'bg-red-500 text-white' : 'bg-white dark:bg-zinc-900 text-slate-700 dark:text-white border border-slate-200 dark:border-zinc-700 hover:bg-slate-50 dark:hover:bg-zinc-800'}`}
           >
@@ -305,10 +305,10 @@ const CoverageView = ({
           {filteredFeatures.map((feature) => {
             const coveredCount = feature.criteria.filter(c => c.is_covered).length
             const uncoveredCount = feature.criteria.length - coveredCount
-            
+
             return (
-              <div 
-                key={feature.feature_name} 
+              <div
+                key={feature.feature_name}
                 onClick={() => setSelectedFeature(feature)}
                 className="rounded-2xl bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 overflow-hidden hover:shadow-xl transition-all duration-300 hover:scale-[1.02] cursor-pointer"
               >
@@ -324,7 +324,7 @@ const CoverageView = ({
                     <div className="h-full bg-white rounded-full" style={{ width: `${feature.coverage_percentage}%` }}></div>
                   </div>
                 </div>
-                
+
                 {/* Criteria Summary */}
                 <div className="p-4 space-y-3">
                   {/* Covered */}
@@ -335,7 +335,7 @@ const CoverageView = ({
                     </div>
                     <span className="text-lg font-bold text-emerald-600 dark:text-emerald-400">{coveredCount}</span>
                   </div>
-                  
+
                   {/* Uncovered */}
                   <div className="flex items-center justify-between p-3 rounded-xl bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900">
                     <div className="flex items-center gap-2">
@@ -344,7 +344,7 @@ const CoverageView = ({
                     </div>
                     <span className="text-lg font-bold text-red-600 dark:text-red-400">{uncoveredCount}</span>
                   </div>
-                  
+
                   {/* Preview of criteria */}
                   <div className="pt-2 border-t border-slate-100 dark:border-zinc-800">
                     <p className="text-xs text-slate-500 dark:text-zinc-500 mb-2">Preview:</p>
@@ -384,23 +384,23 @@ const CoverageView = ({
                 </div>
               </div>
             </div>
-            
+
             {/* Modal Filter */}
             <div className="px-6 py-3 border-b border-slate-200 dark:border-zinc-800 bg-slate-50 dark:bg-black">
               <div className="flex gap-2">
-                <button 
+                <button
                   onClick={() => setFilter('all')}
                   className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${filter === 'all' ? 'bg-violet-500 text-white' : 'bg-white dark:bg-zinc-900 text-slate-600 dark:text-zinc-400 border border-slate-200 dark:border-zinc-700'}`}
                 >
                   All ({selectedFeature.criteria.length})
                 </button>
-                <button 
+                <button
                   onClick={() => setFilter('covered')}
                   className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${filter === 'covered' ? 'bg-emerald-500 text-white' : 'bg-white dark:bg-zinc-900 text-slate-600 dark:text-zinc-400 border border-slate-200 dark:border-zinc-700'}`}
                 >
                   ✅ Covered ({selectedFeature.criteria.filter(c => c.is_covered).length})
                 </button>
-                <button 
+                <button
                   onClick={() => setFilter('uncovered')}
                   className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${filter === 'uncovered' ? 'bg-red-500 text-white' : 'bg-white dark:bg-zinc-900 text-slate-600 dark:text-zinc-400 border border-slate-200 dark:border-zinc-700'}`}
                 >
@@ -408,13 +408,13 @@ const CoverageView = ({
                 </button>
               </div>
             </div>
-            
+
             {/* Criteria List */}
             <div className="p-6 overflow-y-auto max-h-[60vh]">
               <div className="space-y-3">
                 {getFilteredCriteria(selectedFeature.criteria).map((criterion, idx) => (
-                  <div 
-                    key={criterion.id} 
+                  <div
+                    key={criterion.id}
                     className={`p-4 rounded-xl border ${criterion.is_covered ? 'bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-900' : 'bg-red-50 dark:bg-red-950/30 border-red-200 dark:border-red-900'}`}
                   >
                     <div className="flex items-start gap-3">
@@ -673,29 +673,29 @@ function App() {
   useQuery({ queryKey: ['pinned'], queryFn: api.getPinned })
   const { data: kiroConfigData, isLoading: kiroConfigLoading } = useQuery({ queryKey: ['kiroConfig'], queryFn: kiroConfigApi.getConfig })
   const { data: healthData, isLoading: healthLoading } = useQuery({ queryKey: ['health'], queryFn: apiExtended.getHealthScore, staleTime: 300000 })
-  
+
   // Lazy queries - only fetch when needed (home, coverage, or graph view)
   const shouldFetchCoverage = activeView === 'home' || activeView === 'coverage'
   const shouldFetchGraph = activeView === 'home' || activeView === 'graph'
   const shouldFetchSessions = activeView === 'home' || activeView === 'sessions'
-  
-  const { data: coverageData, isLoading: coverageLoading } = useQuery({ 
-    queryKey: ['coverage'], 
-    queryFn: api.getCoverage, 
+
+  const { data: coverageData, isLoading: coverageLoading } = useQuery({
+    queryKey: ['coverage'],
+    queryFn: api.getCoverage,
     staleTime: 300000,
-    enabled: shouldFetchCoverage 
+    enabled: shouldFetchCoverage
   })
-  const { data: graphData, isLoading: graphLoading } = useQuery({ 
-    queryKey: ['graph'], 
-    queryFn: () => apiExtended.getImpactGraph(), 
+  const { data: graphData, isLoading: graphLoading } = useQuery({
+    queryKey: ['graph'],
+    queryFn: () => apiExtended.getImpactGraph(),
     staleTime: 300000,
-    enabled: shouldFetchGraph 
+    enabled: shouldFetchGraph
   })
-  const { data: sessionsData, isLoading: sessionsLoading } = useQuery({ 
-    queryKey: ['sessions'], 
-    queryFn: () => api.getSessions(20, false), 
+  const { data: sessionsData, isLoading: sessionsLoading } = useQuery({
+    queryKey: ['sessions'],
+    queryFn: () => api.getSessions(20, false),
     staleTime: 300000,
-    enabled: shouldFetchSessions 
+    enabled: shouldFetchSessions
   })
   useQuery({ queryKey: ['powers'], queryFn: api.getPowers })
 
@@ -705,7 +705,7 @@ function App() {
   const validateMutation = useMutation({ mutationFn: apiExtended.validateAction, onSuccess: (d) => setActionResult(d) })
   const coverageMutation = useMutation({ mutationFn: apiExtended.coverageAction, onSuccess: (d) => setActionResult(d) })
 
-  const handleBlockClick = async (block: BlockSummary) => { 
+  const handleBlockClick = async (block: BlockSummary) => {
     try {
       const detail = await api.getBlock(block.id)
       setSelectedBlock(detail)
@@ -800,7 +800,7 @@ function App() {
                 {/* Subtle gradient background */}
                 <div className="absolute inset-0 bg-gradient-to-br from-violet-50 via-white to-purple-50 dark:from-zinc-900 dark:via-black dark:to-zinc-900"></div>
                 <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-violet-100/50 via-transparent to-transparent dark:from-violet-900/30 dark:via-transparent dark:to-transparent"></div>
-                
+
                 <div className="relative border border-slate-200/80 dark:border-zinc-800 rounded-2xl p-8">
                   <div className="flex items-center gap-8">
                     <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-violet-500 to-purple-600 p-1 shadow-xl shadow-violet-500/30 flex-shrink-0">
@@ -971,17 +971,17 @@ function App() {
                   {(() => {
                     // Group blocks by feature (folder name)
                     const featureMap = new Map<string, { requirements: BlockSummary | null, design: BlockSummary | null, tasks: BlockSummary | null }>()
-                    
+
                     blocksData.blocks.forEach(block => {
                       // Extract feature name from source path (e.g., ".kiro/specs/feature-name/requirements.md")
                       const parts = block.source.split('/')
                       const featureName = parts[parts.length - 2] || 'unknown'
                       const fileName = parts[parts.length - 1]?.replace('.md', '') || ''
-                      
+
                       if (!featureMap.has(featureName)) {
                         featureMap.set(featureName, { requirements: null, design: null, tasks: null })
                       }
-                      
+
                       const feature = featureMap.get(featureName)!
                       if (fileName === 'requirements' || block.type === 'requirement') {
                         feature.requirements = block
@@ -991,7 +991,7 @@ function App() {
                         feature.tasks = block
                       }
                     })
-                    
+
                     return Array.from(featureMap.entries()).map(([featureName, specs]) => (
                       <div key={featureName} className="rounded-2xl bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 overflow-hidden hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
                         {/* Feature Header */}
@@ -1003,12 +1003,12 @@ function App() {
                             {[specs.requirements && 'Requirements', specs.design && 'Design', specs.tasks && 'Tasks'].filter(Boolean).join(' • ')}
                           </p>
                         </div>
-                        
+
                         {/* Spec Documents */}
                         <div className="p-4 space-y-3">
                           {/* Requirements */}
                           {specs.requirements && (
-                            <button 
+                            <button
                               onClick={() => handleSpecFileClick(featureName, 'requirements')}
                               className="w-full text-left p-3 rounded-xl bg-blue-50 dark:bg-blue-950/50 border border-blue-200 dark:border-blue-900 hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-colors group"
                             >
@@ -1024,10 +1024,10 @@ function App() {
                               </div>
                             </button>
                           )}
-                          
+
                           {/* Design */}
                           {specs.design && (
-                            <button 
+                            <button
                               onClick={() => handleSpecFileClick(featureName, 'design')}
                               className="w-full text-left p-3 rounded-xl bg-purple-50 dark:bg-purple-950/50 border border-purple-200 dark:border-purple-900 hover:bg-purple-100 dark:hover:bg-purple-900/40 transition-colors group"
                             >
@@ -1043,10 +1043,10 @@ function App() {
                               </div>
                             </button>
                           )}
-                          
+
                           {/* Tasks */}
                           {specs.tasks && (
-                            <button 
+                            <button
                               onClick={() => handleSpecFileClick(featureName, 'tasks')}
                               className="w-full text-left p-3 rounded-xl bg-green-50 dark:bg-green-950/50 border border-green-200 dark:border-green-900 hover:bg-green-100 dark:hover:bg-green-900/40 transition-colors group"
                             >
@@ -1062,7 +1062,7 @@ function App() {
                               </div>
                             </button>
                           )}
-                          
+
                           {/* Empty state for missing docs */}
                           {!specs.requirements && !specs.design && !specs.tasks && (
                             <p className="text-zinc-500 text-sm text-center py-4">No spec documents found</p>
@@ -1122,8 +1122,8 @@ function App() {
 
           {/* COVERAGE VIEW */}
           {activeView === 'coverage' && (
-            <CoverageView 
-              coverageData={coverageData} 
+            <CoverageView
+              coverageData={coverageData}
               coverageLoading={coverageLoading}
               getCoverageBg={getCoverageBg}
             />

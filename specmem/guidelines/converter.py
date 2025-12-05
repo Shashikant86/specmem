@@ -3,12 +3,15 @@
 from __future__ import annotations
 
 import re
-from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import yaml
 
-from specmem.guidelines.models import ConversionResult, Guideline, SourceType
+
+if TYPE_CHECKING:
+    from pathlib import Path
+
+from specmem.guidelines.models import ConversionResult, Guideline
 
 
 class GuidelinesConverter:
@@ -151,9 +154,7 @@ class GuidelinesConverter:
 
         return None
 
-    def bulk_convert_to_steering(
-        self, guidelines: list[Guideline]
-    ) -> list[ConversionResult]:
+    def bulk_convert_to_steering(self, guidelines: list[Guideline]) -> list[ConversionResult]:
         """Convert multiple guidelines to steering files.
 
         Args:
@@ -181,9 +182,7 @@ class GuidelinesConverter:
 
         return results
 
-    def write_steering_files(
-        self, results: list[ConversionResult], output_dir: Path
-    ) -> list[Path]:
+    def write_steering_files(self, results: list[ConversionResult], output_dir: Path) -> list[Path]:
         """Write conversion results to steering files.
 
         Args:

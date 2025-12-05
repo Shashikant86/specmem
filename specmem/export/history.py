@@ -6,7 +6,6 @@ This module manages historical data points for trend visualization.
 from __future__ import annotations
 
 import json
-from datetime import datetime
 from pathlib import Path
 
 from specmem.export.models import ExportBundle, HistoryEntry
@@ -77,7 +76,7 @@ class HistoryManager:
 
         # Truncate to limit (keep most recent)
         if len(entries) > self.limit:
-            entries = entries[-self.limit:]
+            entries = entries[-self.limit :]
 
         self.save(entries)
         return entries
@@ -93,7 +92,7 @@ class HistoryManager:
         """
         if len(entries) <= self.limit:
             return entries
-        return entries[-self.limit:]
+        return entries[-self.limit :]
 
     def get_history_for_bundle(self, bundle: ExportBundle) -> list[HistoryEntry]:
         """Get history entries to include in export bundle.
