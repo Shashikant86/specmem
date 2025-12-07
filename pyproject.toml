@@ -8,7 +8,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "specmem"
-version = "0.1.1"
+version = "0.1.4"
 description = "Unified, embeddable memory layer for AI coding agents built on Spec-Driven Development metadata"
 readme = "README.md"
 license = "AGPL-3.0-or-later"
@@ -57,10 +57,16 @@ dependencies = [
     "typer>=0.9.0",
     "click>=8.1.0",
     "rich>=13.0.0",
-    "toml>=0.10.2",
+    "tomli>=2.0.0; python_version < '3.11'",
+    "tomli-w>=1.0.0",
     "pydantic>=2.0.0",
     "numpy>=1.24.0",
     "pyyaml>=6.0.0",
+    # Web UI (included by default)
+    "fastapi>=0.109.0",
+    "uvicorn>=0.27.0",
+    "websockets>=12.0",
+    "jinja2>=3.1.0",
 ]
 
 [project.optional-dependencies]
@@ -80,13 +86,8 @@ together = ["together>=0.2.0"]
 chroma = ["chromadb>=0.4.0"]
 qdrant = ["qdrant-client>=1.7.0"]
 
-# Web UI
-ui = [
-    "fastapi>=0.109.0",
-    "uvicorn>=0.27.0",
-    "websockets>=12.0",
-    "jinja2>=3.1.0",
-]
+# Web UI (now included in core, kept for backwards compatibility)
+ui = []
 
 # All cloud providers
 cloud = [

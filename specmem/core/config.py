@@ -11,13 +11,24 @@ from typing import Literal
 from pydantic import BaseModel, Field
 
 
-try:
-    import tomli
-    import tomli_w
+import sys
 
-    TOML_AVAILABLE = True
+# For Python 3.11+, use built-in tomllib for reading
+if sys.version_info >= (3, 11):
+    import tomllib as tomli
+else:
+    try:
+        import tomli
+    except ImportError:
+        tomli = None
+
+# tomli_w is always needed for writing
+try:
+    import tomli_w
 except ImportError:
-    TOML_AVAILABLE = False
+    tomli_w = None
+
+TOML_AVAILABLE = tomli is not None and tomli_w is not None
 
 from specmem.core.exceptions import ConfigurationError
 
